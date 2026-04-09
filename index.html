@@ -954,13 +954,44 @@ function sbH(extra) {
   }, extra || {});
 }
 
-// Upsert: POST with merge-duplicates — returns the raw Response so caller can check it
-async function sbUpsert(table, data) {
-  return fetch(`${sbUrl}/rest/v1/${table}`, {
+// True upsert for a SINGLE row: PATCH first, if 0 rows matched → POST
+// id_col: the unique column name, id_val: its value, payload: full row object
+async function sbUpsertOne(table, id_col, id_val, payload) {
+  // Try PATCH (update) — returns 204 + Prefer:count header
+  const patchRes = await fetch(
+    `${sbUrl}/rest/v1/${table}?${id_col}=eq.${encodeURIComponent(id_val)}`,
+    {
+      method: 'PATCH',
+      headers: sbH({ Prefer: 'return=minimal,count=exact' }),
+      body: JSON.stringify(payload)
+    }
+  );
+  if (!patchRes.ok) {
+    const txt = await patchRes.text();
+    throw new Error(`PATCH ${table} HTTP ${patchRes.status}: ${txt}`);
+  }
+  // Check how many rows were updated
+  const count = parseInt(patchRes.headers.get('Content-Range')?.split('/')[1] || '0', 10);
+  if (count > 0) return; // Updated — done
+
+  // Row didn't exist → INSERT
+  const postRes = await fetch(`${sbUrl}/rest/v1/${table}`, {
     method: 'POST',
-    headers: sbH({ Prefer: 'return=minimal,resolution=merge-duplicates' }),
-    body: JSON.stringify(data)
+    headers: sbH({ Prefer: 'return=minimal' }),
+    body: JSON.stringify(payload)
   });
+  if (!postRes.ok) {
+    const txt = await postRes.text();
+    // 409 = race condition (inserted concurrently) — treat as success
+    if (postRes.status !== 409) throw new Error(`POST ${table} HTTP ${postRes.status}: ${txt}`);
+  }
+}
+
+// Upsert a batch of rows sequentially (to avoid unique-constraint races)
+async function sbUpsertBatch(table, id_col, rows) {
+  for (const row of rows) {
+    await sbUpsertOne(table, id_col, row[id_col], row);
+  }
 }
 
 // Generic get: fetch all rows of a table, ordered by id
@@ -1044,25 +1075,17 @@ async function sbSaveToCloud(force) {
   try {
     console.log(`[Supabase] Saving: ${state.clients.length} clients, ${state.factures.length} factures`);
 
-    // 1. Parametres (single row)
-    const pRes = await sbUpsert('sb_parametres', { slug: 'main', data: state.parametres });
-    if (!pRes.ok) throw new Error(`sb_parametres: HTTP ${pRes.status} ${await pRes.text()}`);
+    // 1. Parametres (single row — always exists after first save)
+    await sbUpsertOne('sb_parametres', 'slug', 'main',
+      { slug: 'main', data: state.parametres });
 
-    // 2. Clients (batch — array of rows)
-    if (state.clients.length > 0) {
-      const cRes = await sbUpsert('sb_clients',
-        state.clients.map(c => ({ ref: c.ref, data: c }))
-      );
-      if (!cRes.ok) throw new Error(`sb_clients: HTTP ${cRes.status} ${await cRes.text()}`);
-    }
+    // 2. Clients (one upsert per client, sequentially)
+    await sbUpsertBatch('sb_clients', 'ref',
+      state.clients.map(c => ({ ref: c.ref, data: c })));
 
-    // 3. Factures (batch)
-    if (state.factures.length > 0) {
-      const fRes = await sbUpsert('sb_factures',
-        state.factures.map(f => ({ num: f.num, data: f }))
-      );
-      if (!fRes.ok) throw new Error(`sb_factures: HTTP ${fRes.status} ${await fRes.text()}`);
-    }
+    // 3. Factures (one upsert per facture, sequentially)
+    await sbUpsertBatch('sb_factures', 'num',
+      state.factures.map(f => ({ num: f.num, data: f })));
 
     const now = new Date().toLocaleTimeString(T[lang].locale,{hour:'2-digit',minute:'2-digit'});
     sbSetStatus('☁ Supabase ' + now, true);
