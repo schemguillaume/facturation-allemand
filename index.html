@@ -996,9 +996,12 @@ async function sbLoadFromCloud() {
     if (sendLocalToCloud) {
       await sbSaveToCloud(true);
     } else {
+      // Apply cloud data to state and sync to localStorage
       Object.assign(state, cloudData);
       localStorage.setItem('facturation-allemand-v3', JSON.stringify(state));
-      initAll();
+      // Use refreshUI() NOT initAll() — initAll would re-run load()
+      // which overwrites state from localStorage before cloud data is saved
+      refreshUI();
       const now = new Date().toLocaleTimeString(T[lang].locale, {hour:'2-digit',minute:'2-digit'});
       sbSetStatus('☁ Supabase ' + now, true);
     }
@@ -1089,7 +1092,7 @@ function importData(e) {
   const file = e.target.files[0]; if(!file) return;
   const reader = new FileReader();
   reader.onload = ev => {
-    try{ Object.assign(state, JSON.parse(ev.target.result)); save(); initAll(); alert(t('import_ok')); }
+    try{ Object.assign(state, JSON.parse(ev.target.result)); localStorage.setItem('facturation-allemand-v3', JSON.stringify(state)); refreshUI(); alert(t('import_ok')); }
     catch(err){ alert(t('import_err')); }
   };
   reader.readAsText(file);
@@ -1798,23 +1801,11 @@ function voirFacture(i){
 // ══════════════════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════════════════
-function initAll(){
-  load();
+// refreshUI: re-render all UI from current state WITHOUT reloading localStorage
+// Call this after loading data from Supabase to avoid overwriting state
+function refreshUI(){
   document.getElementById('btn-lang-fr').classList.toggle('active',lang==='fr');
   document.getElementById('btn-lang-hu').classList.toggle('active',lang==='hu');
-  // Auto-reconnect Supabase if credentials saved
-  if (sbLoadCreds()) {
-    if (window.location.protocol === 'file:') {
-      // file:// blocks fetch — show a persistent warning in the status bar
-      sbSetBtnLabel('Supabase ⚠');
-      sbSetStatus('⚠ Ouvrez via serveur (pas file://)', false);
-    } else {
-      sbConnected = true;
-      sbSetBtnLabel('Supabase ✓');
-      sbSetStatus('⏳ ' + (lang==='fr' ? 'Chargement cloud…' : 'Felhő betöltés…'), null);
-      setTimeout(() => sbLoadFromCloud(), 600);
-    }
-  }
   applyTranslations();
   renderGuide();
   loadParametresUI();
@@ -1829,6 +1820,23 @@ function initAll(){
   state.currentLignes=[];
   renderLignes();
   renderSuivi();
+}
+
+function initAll(){
+  load(); // load from localStorage into state
+  refreshUI(); // render UI from state
+  // Auto-reconnect Supabase if credentials saved
+  if (sbLoadCreds()) {
+    if (window.location.protocol === 'file:') {
+      sbSetBtnLabel('Supabase ⚠');
+      sbSetStatus('⚠ Ouvrez via serveur (pas file://)', false);
+    } else {
+      sbConnected = true;
+      sbSetBtnLabel('Supabase ✓');
+      sbSetStatus('⏳ ' + (lang==='fr' ? 'Chargement cloud…' : 'Felhő betöltés…'), null);
+      setTimeout(() => sbLoadFromCloud(), 600);
+    }
+  }
 }
 
 initAll();
