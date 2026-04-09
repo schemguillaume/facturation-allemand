@@ -735,8 +735,8 @@ let state = {
 // ══════════════════════════════════════════════════════════════
 // SUPABASE SYNC
 // ══════════════════════════════════════════════════════════════
-const SB_TABLE   = 'facturation_data';
-const SB_ROW_KEY = 'cours-allemand-v1';
+// Supabase uses 3 dedicated tables: sb_parametres, sb_clients, sb_factures
+// Each row is identified by a fixed key column (text)
 let sbUrl  = '';
 let sbKey  = '';
 let sbSyncing  = false;
@@ -746,7 +746,7 @@ let sbConnected = false;
 function sbLoadCreds() {
   sbUrl = localStorage.getItem('sb-url') || '';
   sbKey = localStorage.getItem('sb-key') || '';
-  return sbUrl && sbKey;
+  return !!(sbUrl && sbKey);
 }
 
 function sbSetStatus(msg, ok) {
@@ -822,10 +822,15 @@ function supabaseConnect() {
           <strong>${lang==='fr'?'Configuration rapide (3 minutes) :':'Gyors beállítás (3 perc) :'}</strong><br>
           1. ${lang==='fr'?'Allez sur':'Nyissa meg:'} <a href="https://supabase.com" target="_blank" style="color:#16a34a">supabase.com</a> → ${lang==='fr'?'créez un compte gratuit':'hozzon létre ingyenes fiókot'}<br>
           2. ${lang==='fr'?'Nouveau projet → choisissez un nom et mot de passe':'Új projekt → adjon nevet és jelszót'}<br>
-          3. ${lang==='fr'?'Dans votre projet : menu gauche → Table Editor → New Table':'Projektben: bal menü → Table Editor → New Table'}<br>
-          &nbsp;&nbsp;&nbsp;• ${lang==='fr'?'Nom :':'Név :'} <code style="background:#dcfce7;padding:1px 5px;border-radius:4px">facturation_data</code><br>
-          &nbsp;&nbsp;&nbsp;• ${lang==='fr'?'Colonnes supplémentaires :':'Oszlopok :'} <code style="background:#dcfce7;padding:1px 5px;border-radius:4px">key</code> (text, unique) + <code style="background:#dcfce7;padding:1px 5px;border-radius:4px">payload</code> (json)<br>
-          &nbsp;&nbsp;&nbsp;• ${lang==='fr'?'Désactivez « Enable Row Level Security »':'Kapcsolja ki az « Enable Row Level Security »-t'}<br>
+          3. ${lang==='fr'?'Projet → SQL Editor → New query → copiez-collez ce script et cliquez Run :':'Projektben: SQL Editor → New query → illessze be és futtassa:'}<br>
+          <div style="background:#1e1e2e;color:#a6e3a1;padding:8px 10px;border-radius:6px;font-family:monospace;font-size:10.5px;margin:5px 0;line-height:1.8">
+            create table sb_parametres (id bigserial primary key, slug text unique not null, data jsonb, created_at timestamptz default now());<br>
+            create table sb_clients (id bigserial primary key, ref text unique not null, data jsonb, created_at timestamptz default now());<br>
+            create table sb_factures (id bigserial primary key, num text unique not null, data jsonb, created_at timestamptz default now());<br>
+            alter table sb_parametres disable row level security;<br>
+            alter table sb_clients disable row level security;<br>
+            alter table sb_factures disable row level security;
+          </div>
           4. ${lang==='fr'?'Settings → API → copiez Project URL et anon/public key ci-dessous':'Settings → API → másolja a Project URL-t és az anon/public key-t ide'}
         </div>
         <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px">
@@ -941,129 +946,146 @@ function sbDisconnect() {
   sbSetStatus('✓', null);
 }
 
-// Shared fetch helper – no Prefer header (causes issues), just auth
-function sbHeaders(extra) {
+// ── Supabase REST helpers ─────────────────────────────────────────────────
+function sbH(extra) {
   return Object.assign({
-    apikey: sbKey,
-    Authorization: `Bearer ${sbKey}`,
-    'Content-Type': 'application/json',
-    Accept: 'application/json',
-  }, extra||{});
+    apikey: sbKey, Authorization: `Bearer ${sbKey}`,
+    'Content-Type': 'application/json', Accept: 'application/json',
+  }, extra || {});
 }
 
+// Generic upsert: check if row with id_col=id_val exists, then PATCH or POST
+async function sbUpsert(table, id_col, id_val, data) {
+  const url = `${sbUrl}/rest/v1/${table}`;
+  const filter = `${url}?${id_col}=eq.${encodeURIComponent(id_val)}`;
+
+  const chk = await fetch(`${filter}&select=${id_col}`, { headers: sbH() });
+  if (!chk.ok) throw new Error(`CHECK ${table} HTTP ${chk.status}: ${await chk.text()}`);
+  const rows = await chk.json();
+
+  const exists = rows && rows.length > 0;
+  const res = await fetch(exists ? filter : url, {
+    method: exists ? 'PATCH' : 'POST',
+    headers: sbH({ Prefer: 'return=minimal' }),
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) throw new Error(`${exists?'PATCH':'POST'} ${table} HTTP ${res.status}: ${await res.text()}`);
+}
+
+// Generic get: fetch rows for a table (optionally filter by id)
+async function sbGet(table, id_col, id_val) {
+  const filter = id_val !== undefined
+    ? `${sbUrl}/rest/v1/${table}?${id_col}=eq.${encodeURIComponent(id_val)}&select=*`
+    : `${sbUrl}/rest/v1/${table}?select=*&order=created_at`;
+  const res = await fetch(filter, { headers: sbH() });
+  if (!res.ok) throw new Error(`GET ${table} HTTP ${res.status}: ${await res.text()}`);
+  return res.json();
+}
+
+// Generic delete
+async function sbDelete(table, id_col, id_val) {
+  const res = await fetch(
+    `${sbUrl}/rest/v1/${table}?${id_col}=eq.${encodeURIComponent(id_val)}`,
+    { method: 'DELETE', headers: sbH({ Prefer: 'return=minimal' }) }
+  );
+  if (!res.ok) throw new Error(`DELETE ${table} HTTP ${res.status}: ${await res.text()}`);
+}
+
+// ── Load all data from 3 tables ───────────────────────────────────────────
 async function sbLoadFromCloud() {
   if (!sbUrl || !sbKey) return;
   try {
-    // 1. Check if row exists
-    const checkRes = await fetch(
-      `${sbUrl}/rest/v1/${SB_TABLE}?key=eq.${encodeURIComponent(SB_ROW_KEY)}&select=id,payload`,
-      { headers: sbHeaders() }
-    );
-    if (!checkRes.ok) {
-      const txt = await checkRes.text();
-      throw new Error(`GET ${checkRes.status}: ${txt}`);
-    }
-    const rows = await checkRes.json();
+    sbSetStatus('⏳ ' + (lang==='fr' ? 'Chargement…' : 'Betöltés…'), null);
 
-    if (!rows || !rows.length) {
-      // No data in Supabase yet → push local data
+    // Load in parallel
+    const [paramRows, clientRows, factureRows] = await Promise.all([
+      sbGet('sb_parametres', 'slug', 'main'),
+      sbGet('sb_clients'),
+      sbGet('sb_factures'),
+    ]);
+
+    const hasCloud = clientRows.length > 0 || factureRows.length > 0 || paramRows.length > 0;
+
+    if (!hasCloud) {
+      // First connection — push local data up
       await sbSaveToCloud(true);
       return;
     }
 
-    const cloudData = rows[0].payload;
-    if (!cloudData || typeof cloudData !== 'object') {
-      await sbSaveToCloud(true);
-      return;
-    }
-
-    const localRaw  = localStorage.getItem('facturation-allemand-v3');
+    // Check if local data is newer (more clients or factures)
+    const localRaw = localStorage.getItem('facturation-allemand-v3');
     const localData = localRaw ? JSON.parse(localRaw) : null;
-    const cCt = (cloudData.clients||[]).length;
-    const lCt = (localData?.clients||[]).length || 0;
-    const cFt = (cloudData.factures||[]).length;
-    const lFt = (localData?.factures||[]).length || 0;
+    const lCt = (localData?.clients || []).length;
+    const lFt = (localData?.factures || []).length;
 
-    let sendLocalToCloud = false;
-    if (localData && (lCt > cCt || lFt > cFt)) {
-      sendLocalToCloud = confirm(
+    if (localData && (lCt > clientRows.length || lFt > factureRows.length)) {
+      const sendUp = confirm(
         lang === 'fr'
-          ? `Données locales plus récentes :\n  Local    : ${lCt} clients, ${lFt} factures\n  Supabase : ${cCt} clients, ${cFt} factures\n\nOK → Envoyer les données locales vers Supabase\nAnnuler → Charger depuis Supabase`
-          : `Helyi adatok újabbak :\n  Helyi    : ${lCt} ügyfél, ${lFt} számla\n  Supabase : ${cCt} ügyfél, ${cFt} számla\n\nOK → Helyi adatok feltöltése\nMégse → Betöltés Supabase-ből`
+          ? `Données locales plus récentes :\n  Local    : ${lCt} clients, ${lFt} factures\n  Supabase : ${clientRows.length} clients, ${factureRows.length} factures\n\nOK → Envoyer les données locales vers Supabase\nAnnuler → Charger depuis Supabase`
+          : `Helyi adatok újabbak :\n  Helyi : ${lCt} ügyfél, ${lFt} számla\n  Supabase : ${clientRows.length} ügyfél, ${factureRows.length} számla\n\nOK → Helyi adatok feltöltése\nMégse → Betöltés Supabase-ből`
       );
+      if (sendUp) { await sbSaveToCloud(true); return; }
     }
 
-    if (sendLocalToCloud) {
-      await sbSaveToCloud(true);
-    } else {
-      // Apply cloud data to state and sync to localStorage
-      Object.assign(state, cloudData);
-      localStorage.setItem('facturation-allemand-v3', JSON.stringify(state));
-      // Use refreshUI() NOT initAll() — initAll would re-run load()
-      // which overwrites state from localStorage before cloud data is saved
-      refreshUI();
-      const now = new Date().toLocaleTimeString(T[lang].locale, {hour:'2-digit',minute:'2-digit'});
-      sbSetStatus('☁ Supabase ' + now, true);
-    }
+    // Apply cloud → state
+    if (paramRows.length > 0) Object.assign(state.parametres, paramRows[0].data || {});
+    state.clients  = clientRows.map(r => r.data);
+    state.factures = factureRows.map(r => r.data);
+
+    // Persist to localStorage and refresh UI
+    localStorage.setItem('facturation-allemand-v3', JSON.stringify(state));
+    refreshUI();
+    const now = new Date().toLocaleTimeString(T[lang].locale, {hour:'2-digit',minute:'2-digit'});
+    sbSetStatus('☁ Supabase ' + now, true);
+
   } catch(e) {
     console.error('Supabase load error:', e);
-    sbSetStatus('⚠ ' + (lang==='fr' ? 'Erreur chargement: ' : 'Betöltési hiba: ') + e.message.slice(0,50), false);
+    sbSetStatus('⚠ ' + e.message.slice(0, 55), false);
   }
 }
 
+// ── Save all data to 3 tables ─────────────────────────────────────────────
 async function sbSaveToCloud(force) {
   if (!sbUrl || !sbKey) return;
   if (sbSyncing && !force) { sbPending = true; return; }
   sbSyncing = true;
   try {
-    const payload = JSON.parse(JSON.stringify(state));
+    // 1. Parametres (single row keyed by slug='main')
+    await sbUpsert('sb_parametres', 'slug', 'main',
+      { slug: 'main', data: state.parametres });
 
-    // Step 1: does the row already exist?
-    const checkRes = await fetch(
-      `${sbUrl}/rest/v1/${SB_TABLE}?key=eq.${encodeURIComponent(SB_ROW_KEY)}&select=id`,
-      { headers: sbHeaders() }
-    );
-    const rows = checkRes.ok ? await checkRes.json() : [];
-    const exists = rows && rows.length > 0;
+    // 2. Clients — upsert each row by ref
+    await Promise.all(state.clients.map(c =>
+      sbUpsert('sb_clients', 'ref', c.ref, { ref: c.ref, data: c })
+    ));
 
-    let saveRes;
-    if (exists) {
-      // UPDATE existing row with PATCH
-      saveRes = await fetch(
-        `${sbUrl}/rest/v1/${SB_TABLE}?key=eq.${encodeURIComponent(SB_ROW_KEY)}`,
-        {
-          method: 'PATCH',
-          headers: sbHeaders({ Prefer: 'return=minimal' }),
-          body: JSON.stringify({ payload })
-        }
-      );
-    } else {
-      // INSERT new row
-      saveRes = await fetch(
-        `${sbUrl}/rest/v1/${SB_TABLE}`,
-        {
-          method: 'POST',
-          headers: sbHeaders({ Prefer: 'return=minimal' }),
-          body: JSON.stringify({ key: SB_ROW_KEY, payload })
-        }
-      );
-    }
-
-    if (!saveRes.ok) {
-      const txt = await saveRes.text();
-      throw new Error(`${exists?'PATCH':'POST'} ${saveRes.status}: ${txt}`);
-    }
+    // 3. Factures — upsert each row by num
+    await Promise.all(state.factures.map(f =>
+      sbUpsert('sb_factures', 'num', f.num, { num: f.num, data: f })
+    ));
 
     const now = new Date().toLocaleTimeString(T[lang].locale, {hour:'2-digit',minute:'2-digit'});
     sbSetStatus('☁ Supabase ' + now, true);
 
   } catch(e) {
     console.error('Supabase save error:', e);
-    sbSetStatus('⚠ ' + (lang==='fr' ? 'Erreur sync: ' : 'Szinkr. hiba: ') + e.message.slice(0,50), false);
+    sbSetStatus('⚠ ' + e.message.slice(0, 55), false);
   } finally {
     sbSyncing = false;
     if (sbPending) { sbPending = false; sbSaveToCloud(false); }
   }
+}
+
+// Delete a single client from cloud (called when deleting a client)
+async function sbDeleteClient(ref) {
+  if (!sbConnected) return;
+  try { await sbDelete('sb_clients', 'ref', ref); } catch(e) { console.warn('sbDeleteClient:', e); }
+}
+
+// Delete a single facture from cloud
+async function sbDeleteFacture(num) {
+  if (!sbConnected) return;
+  try { await sbDelete('sb_factures', 'num', num); } catch(e) { console.warn('sbDeleteFacture:', e); }
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1282,7 +1304,7 @@ function ajouterClient(){
     toast('toast-client',nom+t('toast_client_ok'));
   }
 }
-function supprimerClient(ref){if(!confirm(t('confirm_delete_client')+ref+'?'))return;state.clients=state.clients.filter(c=>c.ref!==ref);if(editingClientRef===ref)viderFormClient();save();renderTableClients();}
+function supprimerClient(ref){if(!confirm(t('confirm_delete_client')+ref+'?'))return;state.clients=state.clients.filter(c=>c.ref!==ref);if(editingClientRef===ref)viderFormClient();save();sbDeleteClient(ref);renderTableClients();}
 function chargerClientDansFacture(ref){showPanel('facture');setTimeout(()=>{document.getElementById('f-client').value=ref;remplirClient();},80);}
 function renderTableClients(){
   const search=(document.getElementById('search-client')?.value||'').toLowerCase();
@@ -1398,7 +1420,16 @@ function enregistrerFacture(){
   save();
 }
 function incrementNum(cur){const m=cur.match(/^(.*?)(\d+)$/);if(m)document.getElementById('f-num').value=m[1]+(parseInt(m[2])+1).toString().padStart(m[2].length,'0');}
-function nouvelleFacture(){state.currentLignes=[];renderLignes();document.getElementById('f-client').value='';document.getElementById('f-tva-client').value='';document.getElementById('client-info').style.display='none';document.getElementById('f-periode').value='';majTotaux();}
+function nouvelleFacture(){
+  state.currentLignes=[];
+  renderLignes();
+  document.getElementById('f-client').value='';
+  document.getElementById('f-tva-client').value='';
+  document.getElementById('client-info').style.display='none';
+  document.getElementById('f-periode').value='';
+  document.getElementById('f-date').value=new Date().toISOString().slice(0,10);
+  majTotaux();
+}
 function incrementNum(cur){const m=cur.match(/^(.*?)(\d+)$/);if(m)document.getElementById('f-num').value=m[1]+(parseInt(m[2])+1).toString().padStart(m[2].length,'0');}
 function nouvelleFacture(){state.currentLignes=[];renderLignes();document.getElementById('f-client').value='';document.getElementById('f-tva-client').value='';document.getElementById('client-info').style.display='none';document.getElementById('f-periode').value='';majTotaux();}
 function imprimerFacture(){
@@ -1780,12 +1811,19 @@ function renderSuivi(){
   }).join('');
 }
 function majStatut(i,val){state.factures[i].statut=val;if(val===t('statut_payee')||val==='Payée')state.factures[i].datePaiement=new Date().toLocaleDateString(T[lang].locale);save();renderSuivi();}
-function supprimerFacture(i){if(!confirm(t('confirm_delete_fact')+state.factures[i].num+'?'))return;state.factures.splice(i,1);save();renderSuivi();}
+function supprimerFacture(i){
+  if(!confirm(t('confirm_delete_fact')+state.factures[i].num+'?'))return;
+  const num=state.factures[i].num;
+  state.factures.splice(i,1);
+  save();
+  sbDeleteFacture(num);
+  renderSuivi();
+}
 function voirFacture(i){
   const f=state.factures[i]; showPanel('facture');
   setTimeout(()=>{
     document.getElementById('f-num').value=f.num;
-    document.getElementById('f-date').value=f.dateEmission||'';
+    document.getElementById('f-date').value=f.dateEmission||new Date().toISOString().slice(0,10);
     document.getElementById('f-periode').value=f.periode||'';
     document.getElementById('f-client').value=f.clientRef;
     document.getElementById('f-tva-client').value=f.tvaClient||'';
