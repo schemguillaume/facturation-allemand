@@ -886,16 +886,16 @@ async function sbDoConnect() {
   try {
     // Test: simple GET on the table
     const testRes = await fetch(
-      `${url}/rest/v1/${SB_TABLE}?key=eq.__test__&select=key&limit=1`,
+      `${url}/rest/v1/sb_clients?select=ref&limit=1`,
       { headers: { apikey: key, Authorization: `Bearer ${key}`, Accept: 'application/json' } }
     );
 
-    // 200 = OK, 406 = table exists but no match (fine), 404 = table missing, 401/403 = auth error
+    // 200 = OK, 404 = table missing, 401/403 = auth error
     if (testRes.status === 404) {
       const body = await testRes.text();
       errEl.innerHTML = (lang==='fr'
-        ? '❌ Table introuvable. Vérifiez que vous avez bien créé la table <code>facturation_data</code> dans votre projet Supabase (Table Editor → New Table).<br><small>Détail : ' + body + '</small>'
-        : '❌ Tábla nem található. Ellenőrizze, hogy létrehozta-e a <code>facturation_data</code> táblát a Supabase projektben.');
+        ? '❌ Tables introuvables. Exécutez d\'abord le script SQL dans Supabase → SQL Editor.<br><small>Détail : ' + body + '</small>'
+        : '❌ Táblák nem találhatók. Először futtassa az SQL szkriptet a Supabase SQL Editorban.');
       errEl.style.display = 'block';
       btn.textContent = lang==='fr' ? 'Connecter' : 'Csatlakozás';
       btn.disabled = false; return;
@@ -954,29 +954,27 @@ function sbH(extra) {
   }, extra || {});
 }
 
-// Generic upsert: check if row with id_col=id_val exists, then PATCH or POST
-async function sbUpsert(table, id_col, id_val, data) {
-  const url = `${sbUrl}/rest/v1/${table}`;
-  const filter = `${url}?${id_col}=eq.${encodeURIComponent(id_val)}`;
-
-  const chk = await fetch(`${filter}&select=${id_col}`, { headers: sbH() });
-  if (!chk.ok) throw new Error(`CHECK ${table} HTTP ${chk.status}: ${await chk.text()}`);
-  const rows = await chk.json();
-
-  const exists = rows && rows.length > 0;
-  const res = await fetch(exists ? filter : url, {
-    method: exists ? 'PATCH' : 'POST',
-    headers: sbH({ Prefer: 'return=minimal' }),
+// Upsert: uses Supabase native upsert (POST with Prefer: resolution=merge-duplicates)
+// Requires a UNIQUE constraint on id_col — guaranteed by our SQL CREATE TABLE
+async function sbUpsert(table, data) {
+  const res = await fetch(`${sbUrl}/rest/v1/${table}`, {
+    method: 'POST',
+    headers: sbH({
+      Prefer: 'return=minimal,resolution=merge-duplicates'
+    }),
     body: JSON.stringify(data)
   });
-  if (!res.ok) throw new Error(`${exists?'PATCH':'POST'} ${table} HTTP ${res.status}: ${await res.text()}`);
+  if (!res.ok) {
+    const txt = await res.text();
+    throw new Error(`UPSERT ${table} HTTP ${res.status}: ${txt}`);
+  }
 }
 
-// Generic get: fetch rows for a table (optionally filter by id)
+// Generic get: fetch all rows of a table, ordered by id
 async function sbGet(table, id_col, id_val) {
   const filter = id_val !== undefined
     ? `${sbUrl}/rest/v1/${table}?${id_col}=eq.${encodeURIComponent(id_val)}&select=*`
-    : `${sbUrl}/rest/v1/${table}?select=*&order=created_at`;
+    : `${sbUrl}/rest/v1/${table}?select=*&order=id`;
   const res = await fetch(filter, { headers: sbH() });
   if (!res.ok) throw new Error(`GET ${table} HTTP ${res.status}: ${await res.text()}`);
   return res.json();
@@ -1050,19 +1048,22 @@ async function sbSaveToCloud(force) {
   if (sbSyncing && !force) { sbPending = true; return; }
   sbSyncing = true;
   try {
-    // 1. Parametres (single row keyed by slug='main')
-    await sbUpsert('sb_parametres', 'slug', 'main',
-      { slug: 'main', data: state.parametres });
+    // 1. Parametres
+    await sbUpsert('sb_parametres', { slug: 'main', data: state.parametres });
 
-    // 2. Clients — upsert each row by ref
-    await Promise.all(state.clients.map(c =>
-      sbUpsert('sb_clients', 'ref', c.ref, { ref: c.ref, data: c })
-    ));
+    // 2. Clients — upsert all in one batch POST (array)
+    if (state.clients.length > 0) {
+      await sbUpsert('sb_clients',
+        state.clients.map(c => ({ ref: c.ref, data: c }))
+      );
+    }
 
-    // 3. Factures — upsert each row by num
-    await Promise.all(state.factures.map(f =>
-      sbUpsert('sb_factures', 'num', f.num, { num: f.num, data: f })
-    ));
+    // 3. Factures — upsert all in one batch POST (array)
+    if (state.factures.length > 0) {
+      await sbUpsert('sb_factures',
+        state.factures.map(f => ({ num: f.num, data: f }))
+      );
+    }
 
     const now = new Date().toLocaleTimeString(T[lang].locale, {hour:'2-digit',minute:'2-digit'});
     sbSetStatus('☁ Supabase ' + now, true);
@@ -1431,7 +1432,7 @@ function nouvelleFacture(){
   majTotaux();
 }
 function incrementNum(cur){const m=cur.match(/^(.*?)(\d+)$/);if(m)document.getElementById('f-num').value=m[1]+(parseInt(m[2])+1).toString().padStart(m[2].length,'0');}
-function nouvelleFacture(){state.currentLignes=[];renderLignes();document.getElementById('f-client').value='';document.getElementById('f-tva-client').value='';document.getElementById('client-info').style.display='none';document.getElementById('f-periode').value='';majTotaux();}
+
 function imprimerFacture(){
   // Gather current invoice data
   const num    = document.getElementById('f-num').value.trim();
