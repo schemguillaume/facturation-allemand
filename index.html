@@ -192,7 +192,7 @@ tbody tr:hover td{background:var(--bg2)}
   <div class="card">
     <div class="card-title"><h2 id="form-client-title">&#10133; <span data-t="client_new">Nouveau client</span></h2></div>
     <div class="form-grid fg-4">
-      <div class="field"><label data-t="c_ref_lbl">Référence <span class="req">*</span></label><input id="c-ref" placeholder="CLI001"><span id="c-ref-note" style="display:none;font-size:11px;color:var(--orange);margin-top:3px" data-t="c_ref_note">&#9998; Référence non modifiable en mode édition</span></div>
+      <div class="field"><label data-t="c_ref_lbl">Référence <span class="req">*</span></label><input id="c-ref" readonly style="background:var(--bg2);color:var(--text2);font-weight:600"><span id="c-ref-note" style="font-size:11px;color:var(--text3);margin-top:3px">&#128274; Générée automatiquement</span></div>
       <div class="field span2"><label data-t="c_nom_lbl">Nom / Raison sociale <span class="req">*</span></label><input id="c-nom"></div>
       <div class="field"><label data-t="c_prenom_lbl">Prénom</label><input id="c-prenom"></div>
       <div class="field span2"><label data-t="c_email_lbl">Email <span class="req">*</span></label><input id="c-email" type="email"></div>
@@ -304,7 +304,7 @@ tbody tr:hover td{background:var(--bg2)}
       <button class="btn sm gold" onclick="imprimerFacture()" data-t="btn_print">&#128424; Imprimer / PDF</button>
     </div>
     <div class="form-grid fg-4">
-      <div class="field"><label data-t="fact_num_lbl">N° de facture <span class="req">*</span></label><input id="f-num" value="FAC-2024-001"></div>
+      <div class="field"><label data-t="fact_num_lbl">N° de facture</label><input id="f-num" readonly style="background:var(--bg2);color:var(--text2);font-weight:600" value="FAC-001"></div>
       <div class="field"><label data-t="fact_date_lbl">Date d'émission</label><input id="f-date" type="date"></div>
       <div class="field"><label data-t="fact_periode_lbl">Période couverte</label><input id="f-periode"></div>
       <div class="field"><label data-t="fact_mode_lbl">Mode de règlement</label>
@@ -738,8 +738,8 @@ let state = {
 // ── Supabase credentials ─────────────────────────────────────────────────
 // Fill these two lines with your Supabase project URL and anon key.
 // Once filled, the app connects automatically on every device — no setup needed.
-const SB_URL_DEFAULT = 'https://hpdvsipzgruxiumccgls.supabase.co';   // ← paste your Project URL here  e.g. https://xxxx.supabase.co
-const SB_KEY_DEFAULT = 'sb_publishable_MBSZFlAsr1VfdXhDijsMww_wYR5fqrj';   // ← paste your anon/public key here
+const SB_URL_DEFAULT = '';   // ← paste your Project URL here  e.g. https://xxxx.supabase.co
+const SB_KEY_DEFAULT = '';   // ← paste your anon/public key here
 
 // Runtime state
 let sbUrl  = '';
@@ -972,63 +972,56 @@ function sbH(extra) {
   }, extra || {});
 }
 
-// True upsert for a SINGLE row: PATCH first, if 0 rows matched → POST
-// id_col: the unique column name, id_val: its value, payload: full row object
+// Upsert une ligne : d'abord DELETE la ligne existante, puis INSERT la nouvelle
+// C'est la méthode la plus fiable avec Supabase REST sans dépendre des headers
 async function sbUpsertOne(table, id_col, id_val, payload) {
-  // Try PATCH (update) — returns 204 + Prefer:count header
-  const patchRes = await fetch(
+  // 1. DELETE any existing row (no error if doesn't exist — 200 with empty array)
+  const delRes = await fetch(
     `${sbUrl}/rest/v1/${table}?${id_col}=eq.${encodeURIComponent(id_val)}`,
-    {
-      method: 'PATCH',
-      headers: sbH({ Prefer: 'return=minimal,count=exact' }),
-      body: JSON.stringify(payload)
-    }
+    { method: 'DELETE', headers: sbH({ Prefer: 'return=minimal' }) }
   );
-  if (!patchRes.ok) {
-    const txt = await patchRes.text();
-    throw new Error(`PATCH ${table} HTTP ${patchRes.status}: ${txt}`);
+  if (!delRes.ok) {
+    const txt = await delRes.text();
+    // Ignore 404 — row didn't exist
+    if (delRes.status !== 404) throw new Error(`DELETE ${table} ${delRes.status}: ${txt}`);
   }
-  // Check how many rows were updated
-  const count = parseInt(patchRes.headers.get('Content-Range')?.split('/')[1] || '0', 10);
-  if (count > 0) return; // Updated — done
-
-  // Row didn't exist → INSERT
-  const postRes = await fetch(`${sbUrl}/rest/v1/${table}`, {
+  // 2. INSERT fresh row
+  const insRes = await fetch(`${sbUrl}/rest/v1/${table}`, {
     method: 'POST',
     headers: sbH({ Prefer: 'return=minimal' }),
     body: JSON.stringify(payload)
   });
-  if (!postRes.ok) {
-    const txt = await postRes.text();
-    // 409 = race condition (inserted concurrently) — treat as success
-    if (postRes.status !== 409) throw new Error(`POST ${table} HTTP ${postRes.status}: ${txt}`);
+  if (!insRes.ok) {
+    const txt = await insRes.text();
+    throw new Error(`INSERT ${table} ${insRes.status}: ${txt}`);
   }
+  console.log(`[DB] upserted ${table}[${id_val}]`);
 }
 
-// Upsert a batch of rows sequentially (to avoid unique-constraint races)
+// Upsert un lot de lignes séquentiellement
 async function sbUpsertBatch(table, id_col, rows) {
   for (const row of rows) {
     await sbUpsertOne(table, id_col, row[id_col], row);
   }
 }
 
-// Generic get: fetch all rows of a table, ordered by id
+// Lire toutes les lignes d'une table
 async function sbGet(table, id_col, id_val) {
   const filter = id_val !== undefined
     ? `${sbUrl}/rest/v1/${table}?${id_col}=eq.${encodeURIComponent(id_val)}&select=*`
     : `${sbUrl}/rest/v1/${table}?select=*&order=id`;
   const res = await fetch(filter, { headers: sbH() });
-  if (!res.ok) throw new Error(`GET ${table} HTTP ${res.status}: ${await res.text()}`);
+  if (!res.ok) throw new Error(`GET ${table} ${res.status}: ${await res.text()}`);
   return res.json();
 }
 
-// Generic delete
+// Supprimer une ligne
 async function sbDelete(table, id_col, id_val) {
   const res = await fetch(
     `${sbUrl}/rest/v1/${table}?${id_col}=eq.${encodeURIComponent(id_val)}`,
     { method: 'DELETE', headers: sbH({ Prefer: 'return=minimal' }) }
   );
-  if (!res.ok) throw new Error(`DELETE ${table} HTTP ${res.status}: ${await res.text()}`);
+  if (!res.ok) throw new Error(`DELETE ${table} ${res.status}: ${await res.text()}`);
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1350,7 +1343,16 @@ function convertir(){
 // CLIENTS
 // ══════════════════════════════════════════════════════════════
 let editingClientRef=null;
-function nextRef(){if(!state.clients.length)return'CLI001';const nums=state.clients.map(c=>parseInt(c.ref.replace(/\D/g,''))||0);return'CLI'+(Math.max(...nums)+1).toString().padStart(3,'0');}
+function nextRef(){
+  if(!state.clients.length) return 'CLI-001';
+  const nums=state.clients.map(c=>{const m=c.ref.match(/(\d+)$/);return m?parseInt(m[1]):0;});
+  return 'CLI-'+(Math.max(...nums)+1).toString().padStart(3,'0');
+}
+function nextNum(){
+  if(!state.factures.length) return 'FAC-001';
+  const nums=state.factures.map(f=>{const m=f.num.match(/(\d+)$/);return m?parseInt(m[1]):0;});
+  return 'FAC-'+(Math.max(...nums)+1).toString().padStart(3,'0');
+}
 function viderFormClient(keepRef=false){
   ['c-nom','c-prenom','c-email','c-tel','c-adresse','c-cp','c-ville','c-pays','c-tva','c-tarif','c-notes'].forEach(id=>document.getElementById(id).value='');
   if(!keepRef) document.getElementById('c-ref').value=nextRef();
@@ -1391,7 +1393,20 @@ function modifierClient(ref){
 async function ajouterClient(){
   const ref=document.getElementById('c-ref').value.trim();
   const nom=document.getElementById('c-nom').value.trim();
-  if(!ref||!nom){toast('toast-client',t('toast_client_ref_err'),false);return;}
+  const email=document.getElementById('c-email').value.trim();
+  // Validation champs obligatoires
+  const errors=[];
+  if(!nom) errors.push(lang==='fr'?'Nom / Raison sociale':'Név / Cégnév');
+  if(!email) errors.push('Email');
+  if(errors.length){
+    toast('toast-client',(lang==='fr'?'Champs obligatoires manquants : ':'Kötelező mezők hiányoznak: ')+errors.join(', '),false);
+    // Highlight missing fields
+    document.getElementById('c-nom').style.borderColor=!nom?'var(--red)':'';
+    document.getElementById('c-email').style.borderColor=!email?'var(--red)':'';
+    return;
+  }
+  // Reset borders
+  ['c-nom','c-email'].forEach(id=>document.getElementById(id).style.borderColor='');
   const data={ref,nom,prenom:document.getElementById('c-prenom').value.trim(),email:document.getElementById('c-email').value.trim(),tel:document.getElementById('c-tel').value.trim(),type:document.getElementById('c-type').value,adresse:document.getElementById('c-adresse').value.trim(),cp:document.getElementById('c-cp').value.trim(),ville:document.getElementById('c-ville').value.trim(),pays:document.getElementById('c-pays').value.trim(),tva:document.getElementById('c-tva').value.trim(),devise:document.getElementById('c-devise').value,tarif:document.getElementById('c-tarif').value,niveau:document.getElementById('c-niveau').value,notes:document.getElementById('c-notes').value.trim()};
   // Show saving indicator
   const btn=document.getElementById('btn-ajouter-client');
@@ -1543,10 +1558,22 @@ function majTotaux(){
 async function enregistrerFacture(){
   const num=document.getElementById('f-num').value.trim();
   const clientRef=document.getElementById('f-client').value;
-  if(!num){toast('toast-facture',t('toast_fact_num_err'),false);return;}
-  if(!clientRef){toast('toast-facture',t('toast_fact_client_err'),false);return;}
+  const dateEmission=document.getElementById('f-date').value;
+  // Validation champs obligatoires
+  const errors=[];
+  if(!clientRef) errors.push(lang==='fr'?'Client':'Ügyfél');
+  if(!dateEmission) errors.push(lang==='fr'?'Date d'émission':'Kiállítás dátuma');
+  if(!state.currentLignes.length||!state.currentLignes.some(l=>l.desc&&(l.qty||l.pu)))
+    errors.push(lang==='fr'?'Au moins une ligne complète (description + quantité + prix)':'Legalább egy teljes sor (leírás + mennyiség + ár)');
+  if(errors.length){
+    toast('toast-facture',(lang==='fr'?'Obligatoires : ':'Kötelező: ')+errors.join(' | '),false);
+    document.getElementById('f-client').style.borderColor=!clientRef?'var(--red)':'';
+    document.getElementById('f-date').style.borderColor=!dateEmission?'var(--red)':'';
+    return;
+  }
+  // Reset borders
+  ['f-client','f-date'].forEach(id=>document.getElementById(id).style.borderColor='');
   if(state.factures.find(f=>f.num===num)){toast('toast-facture',t('toast_fact_dup'),false);return;}
-  if(!state.currentLignes.length||!state.currentLignes.some(l=>l.desc)){toast('toast-facture',t('toast_fact_ligne_err'),false);return;}
   const code=document.getElementById('f-devise').value||'EUR';
   const taux=parseFloat(document.getElementById('f-taux').value)||1;
   const d=getDevise(code);
@@ -1559,7 +1586,7 @@ async function enregistrerFacture(){
   state.factures.push({num,dateEmission,periode:document.getElementById('f-periode').value,clientRef,clientNom:client?client.nom:'—',clientType:client?client.type:'',tvaClient:document.getElementById('f-tva-client').value,devise:code,sym:d.sym,taux,montant,montantEur,echeance,mode:document.getElementById('f-mode').value,lignes:JSON.parse(JSON.stringify(state.currentLignes)),statut:t('statut_attente'),datePaiement:''});
   const ok = await saveAsync();
   if(ok){
-    incrementNum(num);
+    incrementNum();
     toast('toast-facture',t('toast_fact_ok').replace('  ',' '+num+' ')||'Facture '+num+' enregistrée ✓');
   } else {
     // Rollback
@@ -1567,7 +1594,7 @@ async function enregistrerFacture(){
     toast('toast-facture', lang==='fr'?'⚠ Erreur Supabase — facture non sauvegardée':'⚠ Supabase hiba — számla nem mentve', false);
   }
 }
-function incrementNum(cur){const m=cur.match(/^(.*?)(\d+)$/);if(m)document.getElementById('f-num').value=m[1]+(parseInt(m[2])+1).toString().padStart(m[2].length,'0');}
+
 function nouvelleFacture(){
   state.currentLignes=[];
   renderLignes();
@@ -1576,9 +1603,10 @@ function nouvelleFacture(){
   document.getElementById('client-info').style.display='none';
   document.getElementById('f-periode').value='';
   document.getElementById('f-date').value=new Date().toISOString().slice(0,10);
+  document.getElementById('f-num').value=nextNum();
   majTotaux();
 }
-function incrementNum(cur){const m=cur.match(/^(.*?)(\d+)$/);if(m)document.getElementById('f-num').value=m[1]+(parseInt(m[2])+1).toString().padStart(m[2].length,'0');}
+function incrementNum(){document.getElementById('f-num').value=nextNum();}
 
 function imprimerFacture(){
   // Gather current invoice data
@@ -2004,6 +2032,8 @@ function refreshUI(){
   document.getElementById('c-ref').value=nextRef();
   document.getElementById('f-date').value=new Date().toISOString().slice(0,10);
   document.getElementById('d-date-maj').value=new Date().toISOString().slice(0,10);
+  document.getElementById('f-num').value=nextNum();
+  document.getElementById('c-ref').value=nextRef();
   refreshClientSelect();
   state.currentLignes=[];
   renderLignes();
