@@ -1238,7 +1238,14 @@ function changerDeviseActive() {
   document.getElementById('d-icon').className='devise-sym '+(code==='HUF'?'huf':'eur');
   document.getElementById('d-banner-title').textContent=`${d.nom} (${code})`;
   document.getElementById('d-banner-sub').textContent=`1 EUR = ${parseFloat(d.taux).toFixed(4)} ${code}`;
-  const f=document.getElementById('f-devise'); if(f){f.value=code;document.getElementById('f-taux').value=d.taux;document.getElementById('f-sym').value=d.sym;document.getElementById('pu-sym').textContent=d.sym;majTotaux();}
+  const f=document.getElementById('f-devise');
+  if(f){
+    f.value=code;
+    const ftaux=document.getElementById('f-taux'); if(ftaux) ftaux.value=d.taux;
+    const fsym=document.getElementById('f-sym');   if(fsym)  fsym.value=d.sym;
+    const pusym=document.getElementById('pu-sym'); if(pusym) pusym.textContent=d.sym;
+    majTotaux();
+  }
   refreshConvertisseur(); save();
 }
 function majTauxActif(){
@@ -1375,9 +1382,23 @@ function remplirClient(){
     ${c.tva?`<div>${t('c_tva_lbl')}: <strong>${c.tva}</strong></div>`:''}
     ${isUEpro&&!c.tva?`<div class="warn">${t('client_warn_tva')}</div>`:''}`;
   if(c.tva)document.getElementById('f-tva-client').value=c.tva;
-  if(c.devise){const d=getDevise(c.devise);document.getElementById('f-devise').value=c.devise;document.getElementById('f-taux').value=d.taux;document.getElementById('f-sym').value=d.sym;document.getElementById('pu-sym').textContent=d.sym;majTotaux();}
+  if(c.devise){
+    const d=getDevise(c.devise);
+    const fd=document.getElementById('f-devise');   if(fd)   fd.value=c.devise;
+    const ft=document.getElementById('f-taux');     if(ft)   ft.value=d.taux;
+    const fs=document.getElementById('f-sym');      if(fs)   fs.value=d.sym;
+    const ps=document.getElementById('pu-sym');     if(ps)   ps.textContent=d.sym;
+    majTotaux();
+  }
 }
-function onChangeDeviseFacture(){const code=document.getElementById('f-devise').value;const d=getDevise(code);document.getElementById('f-taux').value=d.taux;document.getElementById('f-sym').value=d.sym;document.getElementById('pu-sym').textContent=d.sym;majTotaux();renderLignes();}
+function onChangeDeviseFacture(){
+  const code=document.getElementById('f-devise').value;
+  const d=getDevise(code);
+  const ft=document.getElementById('f-taux');  if(ft)  ft.value=d.taux;
+  const fs=document.getElementById('f-sym');   if(fs)  fs.value=d.sym;
+  const ps=document.getElementById('pu-sym');  if(ps)  ps.textContent=d.sym;
+  majTotaux(); renderLignes();
+}
 function ajouterLigne(){state.currentLignes.push({id:Date.now(),desc:'',date:'',qty:'',pu:''});renderLignes();}
 function supprimerLigne(id){state.currentLignes=state.currentLignes.filter(l=>l.id!==id);renderLignes();}
 function updateLigne(id,field,val){
@@ -1411,16 +1432,19 @@ function renderLignes(){
   majTotaux();
 }
 function majTotaux(){
-  const code=document.getElementById('f-devise').value||'EUR';
-  const taux=parseFloat(document.getElementById('f-taux').value)||1;
+  const fdev=document.getElementById('f-devise'); if(!fdev) return;
+  const code=fdev.value||'EUR';
+  const taux=parseFloat((document.getElementById('f-taux')||{}).value)||1;
   const d=getDevise(code); const sym=d.sym;
   let total=0; state.currentLignes.forEach(l=>{total+=(parseFloat(l.qty)||0)*(parseFloat(l.pu)||0);});
   const fmt=v=>v.toLocaleString(T[lang].locale,{minimumFractionDigits:2,maximumFractionDigits:2})+' '+sym;
-  document.getElementById('f-sous-total').textContent=fmt(total);
-  document.getElementById('f-total').textContent=fmt(total);
+  const st=document.getElementById('f-sous-total'); if(st) st.textContent=fmt(total);
+  const ft=document.getElementById('f-total');      if(ft) ft.textContent=fmt(total);
   const eqWrap=document.getElementById('eq-eur-wrap');
-  if(code!=='EUR'&&taux>0){eqWrap.style.display='flex';document.getElementById('f-eq-eur').textContent=(total/taux).toLocaleString(T[lang].locale,{minimumFractionDigits:2,maximumFractionDigits:2})+' €';}
-  else eqWrap.style.display='none';
+  if(eqWrap){
+    if(code!=='EUR'&&taux>0){eqWrap.style.display='flex';const eq=document.getElementById('f-eq-eur');if(eq)eq.textContent=(total/taux).toLocaleString(T[lang].locale,{minimumFractionDigits:2,maximumFractionDigits:2})+' €';}
+    else eqWrap.style.display='none';
+  }
 }
 function enregistrerFacture(){
   const num=document.getElementById('f-num').value.trim();
@@ -1854,7 +1878,7 @@ function voirFacture(i){
     document.getElementById('f-devise').value=f.devise;
     document.getElementById('f-taux').value=f.taux;
     document.getElementById('f-sym').value=f.sym;
-    document.getElementById('pu-sym').textContent=f.sym;
+    const ps2=document.getElementById('pu-sym'); if(ps2) ps2.textContent=f.sym;
     state.currentLignes=JSON.parse(JSON.stringify(f.lignes));
     remplirClient(); renderLignes();
   },80);
