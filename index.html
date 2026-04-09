@@ -300,7 +300,7 @@ tbody tr:hover td{background:var(--bg2)}
 <div id="panel-facture" class="panel">
   <div class="card">
     <div class="card-title">
-      <h2>&#128196; <span data-t="fact_entete">En-tête de facture</span></h2>
+      <h2>&#128196; <span data-t="fact_entete">En-tête de facture</span> <span id="fact-form-title" style="font-size:13px;font-weight:400;color:var(--accent2);margin-left:6px"></span></h2>
       <button class="btn sm gold" onclick="imprimerFacture()" data-t="btn_print">&#128424; Imprimer / PDF</button>
     </div>
     <div class="form-grid fg-4">
@@ -352,7 +352,7 @@ tbody tr:hover td{background:var(--bg2)}
     <div class="grand"><span data-t="total_ttc">TOTAL TTC</span><span id="f-total">0,00 €</span></div>
   </div>
   <div class="btn-row">
-    <button class="btn primary" onclick="enregistrerFacture()" data-t="btn_save_fact">&#10003; Enregistrer la facture</button>
+    <button id="btn-enregistrer-fact" class="btn primary" onclick="enregistrerFacture()" data-t="btn_save_fact">&#10003; Enregistrer la facture</button>
     <button class="btn" onclick="nouvelleFacture()" data-t="btn_new_fact">&#10010; Nouvelle facture</button>
     <span id="toast-facture" class="toast"></span>
   </div>
@@ -463,6 +463,9 @@ fr: {
   stat_nb:"Factures", stat_total:"Total facturé", stat_encaisse:"Encaissé",
   stat_attente:"En attente", stat_retard:"En retard",
   btn_voir:"Voir",
+  btn_modifier_fact:"✎ Modifier",
+  fact_edit_title:"Modifier la facture",
+  btn_update_fact:"✓ Mettre à jour",
   confirm_delete_client:"Supprimer le client ",
   confirm_delete_fact:"Supprimer la facture ",
   confirm_delete_devise:"Supprimer la devise ",
@@ -574,6 +577,9 @@ hu: {
   stat_nb:"Számlák", stat_total:"Összesen számlázva", stat_encaisse:"Befolyt",
   stat_attente:"Függőben", stat_retard:"Késedelmes",
   btn_voir:"Megtekintés",
+  btn_modifier_fact:"✎ Módosítás",
+  fact_edit_title:"Számla módosítása",
+  btn_update_fact:"✓ Frissítés",
   confirm_delete_client:"Törli ezt az ügyfelet: ",
   confirm_delete_fact:"Törli ezt a számlát: ",
   confirm_delete_devise:"Törli ezt a devizát: ",
@@ -1343,6 +1349,7 @@ function convertir(){
 // CLIENTS
 // ══════════════════════════════════════════════════════════════
 let editingClientRef=null;
+let editingFactureIndex=-1; // -1 = nouvelle facture, >= 0 = index de la facture en cours d'édition
 function nextRef(){
   if(!state.clients.length) return 'CLI-001';
   const nums=state.clients.map(c=>{const m=c.ref.match(/(\d+)$/);return m?parseInt(m[1]):0;});
@@ -1573,7 +1580,7 @@ async function enregistrerFacture(){
   }
   // Reset borders
   ['f-client','f-date'].forEach(id=>document.getElementById(id).style.borderColor='');
-  if(state.factures.find(f=>f.num===num)){toast('toast-facture',t('toast_fact_dup'),false);return;}
+  if(state.factures.find((f,i)=>f.num===num&&i!==editingFactureIndex)){toast('toast-facture',t('toast_fact_dup'),false);return;}
   const code=document.getElementById('f-devise').value||'EUR';
   const taux=parseFloat(document.getElementById('f-taux').value)||1;
   const d=getDevise(code);
@@ -1582,19 +1589,47 @@ async function enregistrerFacture(){
   const client=state.clients.find(c=>c.ref===clientRef);
   let echeance='';
   if(dateEmission){const d2=new Date(dateEmission);d2.setDate(d2.getDate()+(state.parametres.delai||30));echeance=d2.toISOString().slice(0,10);}
-  state.factures.push({num,dateEmission,periode:document.getElementById('f-periode').value,clientRef,clientNom:client?client.nom:'—',clientType:client?client.type:'',tvaClient:document.getElementById('f-tva-client').value,devise:code,sym:d.sym,taux,montant,montantEur,echeance,mode:document.getElementById('f-mode').value,lignes:JSON.parse(JSON.stringify(state.currentLignes)),statut:t('statut_attente'),datePaiement:''});
-  const ok = await saveAsync();
-  if(ok){
-    incrementNum();
-    toast('toast-facture',t('toast_fact_ok').replace('  ',' '+num+' ')||'Facture '+num+' enregistrée ✓');
+  const factData={num,dateEmission,periode:document.getElementById('f-periode').value,clientRef,clientNom:client?client.nom:'—',clientType:client?client.type:'',tvaClient:document.getElementById('f-tva-client').value,devise:code,sym:d.sym,taux,montant,montantEur,echeance,mode:document.getElementById('f-mode').value,lignes:JSON.parse(JSON.stringify(state.currentLignes))};
+
+  if(editingFactureIndex >= 0){
+    // ── Mode mise à jour ──────────────────────────────────────
+    const ancien=state.factures[editingFactureIndex];
+    // Conserver le statut et la date de paiement existants
+    factData.statut=ancien.statut;
+    factData.datePaiement=ancien.datePaiement||'';
+    const backup={...ancien};
+    state.factures[editingFactureIndex]=factData;
+    const ok=await saveAsync();
+    if(ok){
+      editingFactureIndex=-1;
+      const btnSave=document.getElementById('btn-enregistrer-fact');
+      if(btnSave){btnSave.textContent=t('btn_save_fact');}
+      const titre=document.getElementById('fact-form-title');
+      if(titre) titre.textContent='';
+      toast('toast-facture',(lang==='fr'?'Facture '+num+' mise à jour ✓':'Számla '+num+' frissítve ✓'));
+      renderSuivi();
+    } else {
+      state.factures[editingFactureIndex]=backup;
+      toast('toast-facture',lang==='fr'?'⚠ Erreur Supabase':'⚠ Supabase hiba',false);
+    }
   } else {
-    // Rollback
-    state.factures.pop();
-    toast('toast-facture', lang==='fr'?'⚠ Erreur Supabase — facture non sauvegardée':'⚠ Supabase hiba — számla nem mentve', false);
+    // ── Mode nouvelle facture ─────────────────────────────────
+    factData.statut=t('statut_attente');
+    factData.datePaiement='';
+    state.factures.push(factData);
+    const ok=await saveAsync();
+    if(ok){
+      incrementNum();
+      toast('toast-facture',t('toast_fact_ok').replace('  ',' '+num+' ')||'Facture '+num+' enregistrée ✓');
+    } else {
+      state.factures.pop();
+      toast('toast-facture',lang==='fr'?'⚠ Erreur Supabase — facture non sauvegardée':'⚠ Supabase hiba — számla nem mentve',false);
+    }
   }
 }
 
 function nouvelleFacture(){
+  editingFactureIndex=-1;
   state.currentLignes=[];
   renderLignes();
   document.getElementById('f-client').value='';
@@ -1603,6 +1638,10 @@ function nouvelleFacture(){
   document.getElementById('f-periode').value='';
   document.getElementById('f-date').value=new Date().toISOString().slice(0,10);
   document.getElementById('f-num').value=nextNum();
+  const btnSave=document.getElementById('btn-enregistrer-fact');
+  if(btnSave) btnSave.textContent=t('btn_save_fact');
+  const titre=document.getElementById('fact-form-title');
+  if(titre) titre.textContent='';
   majTotaux();
 }
 function incrementNum(){document.getElementById('f-num').value=nextNum();}
@@ -1980,6 +2019,7 @@ function renderSuivi(){
       </select></td>
       <td style="font-size:11px;color:${late?'var(--red)':'var(--text2)'}">${f.echeance?new Date(f.echeance+'T12:00').toLocaleDateString(T[lang].locale):'—'}</td>
       <td style="white-space:nowrap;display:flex;gap:3px">
+        ${(f.statut===t('statut_attente')||f.statut==='En attente'||f.statut==='Függőben')?`<button class="btn xs" style="color:var(--accent2);border-color:var(--accent2)" onclick="modifierFacture(${ri})">${t('btn_modifier_fact')}</button>`:''}
         <button class="btn xs" onclick="voirFacture(${ri})">${t('btn_voir')}</button>
         <button class="btn xs danger" onclick="supprimerFacture(${ri})">${t('btn_delete')}</button>
       </td>
@@ -1996,8 +2036,11 @@ async function supprimerFacture(i){
   if(ok){ sbDeleteFacture(num); renderSuivi(); }
   else { state.factures=backup; renderSuivi(); toast('toast-facture',lang==='fr'?'⚠ Erreur suppression':'⚠ Törlési hiba',false); }
 }
-function voirFacture(i){
-  const f=state.factures[i]; showPanel('facture');
+// Charge une facture dans le panneau Facture
+function _chargerFactureDansForm(i, modeEdition) {
+  const f=state.factures[i];
+  editingFactureIndex = modeEdition ? i : -1;
+  showPanel('facture');
   setTimeout(()=>{
     document.getElementById('f-num').value=f.num;
     document.getElementById('f-date').value=f.dateEmission||new Date().toISOString().slice(0,10);
@@ -2010,8 +2053,24 @@ function voirFacture(i){
     const ps2=document.getElementById('pu-sym'); if(ps2) ps2.textContent=f.sym;
     state.currentLignes=JSON.parse(JSON.stringify(f.lignes));
     remplirClient(); renderLignes();
+    // Update button + title based on mode
+    const btnSave=document.getElementById('btn-enregistrer-fact');
+    const titre=document.getElementById('fact-form-title');
+    if(modeEdition){
+      if(btnSave) btnSave.textContent=t('btn_update_fact');
+      if(titre) titre.textContent=t('fact_edit_title')+' '+f.num;
+    } else {
+      if(btnSave) btnSave.textContent=t('btn_save_fact');
+      if(titre) titre.textContent='';
+    }
   },80);
 }
+
+// Voir une facture (lecture seule — ne permet pas de sauvegarder par-dessus)
+function voirFacture(i){ _chargerFactureDansForm(i, false); }
+
+// Modifier une facture "En attente" depuis le suivi
+function modifierFacture(i){ _chargerFactureDansForm(i, true); }
 
 // ══════════════════════════════════════════════════════════════
 // INIT
