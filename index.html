@@ -1399,7 +1399,7 @@ async function ajouterClient(){
   if(!nom) errors.push(lang==='fr'?'Nom / Raison sociale':'Név / Cégnév');
   if(!email) errors.push('Email');
   if(errors.length){
-    toast('toast-client',(lang==='fr'?'Champs obligatoires manquants : ':'Kötelező mezők hiányoznak: ')+errors.join(', '),false);
+    toast('toast-client',(lang==='fr'?"Champs obligatoires manquants : ":'Kötelező mezők hiányoznak: ')+errors.join(', '),false);
     // Highlight missing fields
     document.getElementById('c-nom').style.borderColor=!nom?'var(--red)':'';
     document.getElementById('c-email').style.borderColor=!email?'var(--red)':'';
@@ -1562,11 +1562,11 @@ async function enregistrerFacture(){
   // Validation champs obligatoires
   const errors=[];
   if(!clientRef) errors.push(lang==='fr'?'Client':'Ügyfél');
-  if(!dateEmission) errors.push(lang==='fr'?'Date d'émission':'Kiállítás dátuma');
+  if(!dateEmission) errors.push(lang==='fr'?"Date d'émission":'Kiállítás dátuma');
   if(!state.currentLignes.length||!state.currentLignes.some(l=>l.desc&&(l.qty||l.pu)))
-    errors.push(lang==='fr'?'Au moins une ligne complète (description + quantité + prix)':'Legalább egy teljes sor (leírás + mennyiség + ár)');
+    errors.push(lang==='fr'?"Au moins une ligne complète (description + quantité + prix)":'Legalább egy teljes sor (leírás + mennyiség + ár)');
   if(errors.length){
-    toast('toast-facture',(lang==='fr'?'Obligatoires : ':'Kötelező: ')+errors.join(' | '),false);
+    toast('toast-facture',(lang==='fr'?"Obligatoires : ":'Kötelező: ')+errors.join(' | '),false);
     document.getElementById('f-client').style.borderColor=!clientRef?'var(--red)':'';
     document.getElementById('f-date').style.borderColor=!dateEmission?'var(--red)':'';
     return;
