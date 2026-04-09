@@ -1580,7 +1580,6 @@ async function enregistrerFacture(){
   let montant=0; state.currentLignes.forEach(l=>{montant+=(parseFloat(l.qty)||0)*(parseFloat(l.pu)||0);});
   const montantEur=code==='EUR'?montant:montant/taux;
   const client=state.clients.find(c=>c.ref===clientRef);
-  const dateEmission=document.getElementById('f-date').value;
   let echeance='';
   if(dateEmission){const d2=new Date(dateEmission);d2.setDate(d2.getDate()+(state.parametres.delai||30));echeance=d2.toISOString().slice(0,10);}
   state.factures.push({num,dateEmission,periode:document.getElementById('f-periode').value,clientRef,clientNom:client?client.nom:'—',clientType:client?client.type:'',tvaClient:document.getElementById('f-tva-client').value,devise:code,sym:d.sym,taux,montant,montantEur,echeance,mode:document.getElementById('f-mode').value,lignes:JSON.parse(JSON.stringify(state.currentLignes)),statut:t('statut_attente'),datePaiement:''});
