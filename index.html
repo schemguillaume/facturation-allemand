@@ -954,20 +954,13 @@ function sbH(extra) {
   }, extra || {});
 }
 
-// Upsert: uses Supabase native upsert (POST with Prefer: resolution=merge-duplicates)
-// Requires a UNIQUE constraint on id_col — guaranteed by our SQL CREATE TABLE
+// Upsert: POST with merge-duplicates — returns the raw Response so caller can check it
 async function sbUpsert(table, data) {
-  const res = await fetch(`${sbUrl}/rest/v1/${table}`, {
+  return fetch(`${sbUrl}/rest/v1/${table}`, {
     method: 'POST',
-    headers: sbH({
-      Prefer: 'return=minimal,resolution=merge-duplicates'
-    }),
+    headers: sbH({ Prefer: 'return=minimal,resolution=merge-duplicates' }),
     body: JSON.stringify(data)
   });
-  if (!res.ok) {
-    const txt = await res.text();
-    throw new Error(`UPSERT ${table} HTTP ${res.status}: ${txt}`);
-  }
 }
 
 // Generic get: fetch all rows of a table, ordered by id
@@ -989,104 +982,111 @@ async function sbDelete(table, id_col, id_val) {
   if (!res.ok) throw new Error(`DELETE ${table} HTTP ${res.status}: ${await res.text()}`);
 }
 
-// ── Load all data from 3 tables ───────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════
+// SUPABASE LOAD & SAVE
+// ══════════════════════════════════════════════════════════════
+
+// Called once on connect or page load — loads cloud data into state
 async function sbLoadFromCloud() {
   if (!sbUrl || !sbKey) return;
   try {
-    sbSetStatus('⏳ ' + (lang==='fr' ? 'Chargement…' : 'Betöltés…'), null);
+    sbSetStatus('⏳ ' + (lang==='fr' ? 'Chargement Supabase…' : 'Supabase betöltés…'), null);
 
-    // Load in parallel
     const [paramRows, clientRows, factureRows] = await Promise.all([
       sbGet('sb_parametres', 'slug', 'main'),
       sbGet('sb_clients'),
       sbGet('sb_factures'),
     ]);
 
-    const hasCloud = clientRows.length > 0 || factureRows.length > 0 || paramRows.length > 0;
+    const cloudEmpty = clientRows.length === 0 && factureRows.length === 0 && paramRows.length === 0;
 
-    if (!hasCloud) {
-      // First connection — push local data up
+    if (cloudEmpty) {
+      // Supabase is empty — push whatever is local
+      console.log('[Supabase] Cloud empty → pushing local data');
       await sbSaveToCloud(true);
+      const now = new Date().toLocaleTimeString(T[lang].locale,{hour:'2-digit',minute:'2-digit'});
+      sbSetStatus('☁ ' + (lang==='fr' ? 'Données envoyées ' : 'Feltöltve ') + now, true);
       return;
     }
 
-    // Check if local data is newer (more clients or factures)
-    const localRaw = localStorage.getItem('facturation-allemand-v3');
-    const localData = localRaw ? JSON.parse(localRaw) : null;
-    const lCt = (localData?.clients || []).length;
-    const lFt = (localData?.factures || []).length;
+    // Cloud has data — always prefer cloud on load
+    // (user can use "Exporter" to backup local data first if needed)
+    console.log(`[Supabase] Loaded: ${clientRows.length} clients, ${factureRows.length} factures`);
 
-    if (localData && (lCt > clientRows.length || lFt > factureRows.length)) {
-      const sendUp = confirm(
-        lang === 'fr'
-          ? `Données locales plus récentes :\n  Local    : ${lCt} clients, ${lFt} factures\n  Supabase : ${clientRows.length} clients, ${factureRows.length} factures\n\nOK → Envoyer les données locales vers Supabase\nAnnuler → Charger depuis Supabase`
-          : `Helyi adatok újabbak :\n  Helyi : ${lCt} ügyfél, ${lFt} számla\n  Supabase : ${clientRows.length} ügyfél, ${factureRows.length} számla\n\nOK → Helyi adatok feltöltése\nMégse → Betöltés Supabase-ből`
-      );
-      if (sendUp) { await sbSaveToCloud(true); return; }
+    // Rebuild state from cloud rows
+    if (paramRows.length > 0 && paramRows[0].data) {
+      Object.assign(state.parametres, paramRows[0].data);
     }
+    state.clients  = clientRows.map(r => r.data).filter(Boolean);
+    state.factures = factureRows.map(r => r.data).filter(Boolean);
 
-    // Apply cloud → state
-    if (paramRows.length > 0) Object.assign(state.parametres, paramRows[0].data || {});
-    state.clients  = clientRows.map(r => r.data);
-    state.factures = factureRows.map(r => r.data);
-
-    // Persist to localStorage and refresh UI
+    // Sync to localStorage so it matches cloud
     localStorage.setItem('facturation-allemand-v3', JSON.stringify(state));
+
+    // Refresh all UI
     refreshUI();
-    const now = new Date().toLocaleTimeString(T[lang].locale, {hour:'2-digit',minute:'2-digit'});
+
+    const now = new Date().toLocaleTimeString(T[lang].locale,{hour:'2-digit',minute:'2-digit'});
     sbSetStatus('☁ Supabase ' + now, true);
 
   } catch(e) {
-    console.error('Supabase load error:', e);
-    sbSetStatus('⚠ ' + e.message.slice(0, 55), false);
+    console.error('[Supabase] Load error:', e);
+    sbSetStatus('⚠ ' + e.message.slice(0, 60), false);
   }
 }
 
-// ── Save all data to 3 tables ─────────────────────────────────────────────
+// Called on every save() — syncs current state to Supabase
 async function sbSaveToCloud(force) {
   if (!sbUrl || !sbKey) return;
   if (sbSyncing && !force) { sbPending = true; return; }
   sbSyncing = true;
-  try {
-    // 1. Parametres
-    await sbUpsert('sb_parametres', { slug: 'main', data: state.parametres });
 
-    // 2. Clients — upsert all in one batch POST (array)
+  try {
+    console.log(`[Supabase] Saving: ${state.clients.length} clients, ${state.factures.length} factures`);
+
+    // 1. Parametres (single row)
+    const pRes = await sbUpsert('sb_parametres', { slug: 'main', data: state.parametres });
+    if (!pRes.ok) throw new Error(`sb_parametres: HTTP ${pRes.status} ${await pRes.text()}`);
+
+    // 2. Clients (batch — array of rows)
     if (state.clients.length > 0) {
-      await sbUpsert('sb_clients',
+      const cRes = await sbUpsert('sb_clients',
         state.clients.map(c => ({ ref: c.ref, data: c }))
       );
+      if (!cRes.ok) throw new Error(`sb_clients: HTTP ${cRes.status} ${await cRes.text()}`);
     }
 
-    // 3. Factures — upsert all in one batch POST (array)
+    // 3. Factures (batch)
     if (state.factures.length > 0) {
-      await sbUpsert('sb_factures',
+      const fRes = await sbUpsert('sb_factures',
         state.factures.map(f => ({ num: f.num, data: f }))
       );
+      if (!fRes.ok) throw new Error(`sb_factures: HTTP ${fRes.status} ${await fRes.text()}`);
     }
 
-    const now = new Date().toLocaleTimeString(T[lang].locale, {hour:'2-digit',minute:'2-digit'});
+    const now = new Date().toLocaleTimeString(T[lang].locale,{hour:'2-digit',minute:'2-digit'});
     sbSetStatus('☁ Supabase ' + now, true);
+    console.log('[Supabase] Save OK at', now);
 
   } catch(e) {
-    console.error('Supabase save error:', e);
-    sbSetStatus('⚠ ' + e.message.slice(0, 55), false);
+    console.error('[Supabase] Save error:', e);
+    sbSetStatus('⚠ ' + e.message.slice(0, 60), false);
   } finally {
     sbSyncing = false;
     if (sbPending) { sbPending = false; sbSaveToCloud(false); }
   }
 }
 
-// Delete a single client from cloud (called when deleting a client)
+// Delete a single client
 async function sbDeleteClient(ref) {
   if (!sbConnected) return;
-  try { await sbDelete('sb_clients', 'ref', ref); } catch(e) { console.warn('sbDeleteClient:', e); }
+  try { await sbDelete('sb_clients', 'ref', ref); } catch(e) { console.warn('[Supabase] deleteClient:', e); }
 }
 
-// Delete a single facture from cloud
+// Delete a single facture
 async function sbDeleteFacture(num) {
   if (!sbConnected) return;
-  try { await sbDelete('sb_factures', 'num', num); } catch(e) { console.warn('sbDeleteFacture:', e); }
+  try { await sbDelete('sb_factures', 'num', num); } catch(e) { console.warn('[Supabase] deleteFacture:', e); }
 }
 
 // ══════════════════════════════════════════════════════════════
