@@ -735,8 +735,13 @@ let state = {
 // ══════════════════════════════════════════════════════════════
 // SUPABASE SYNC
 // ══════════════════════════════════════════════════════════════
-// Supabase uses 3 dedicated tables: sb_parametres, sb_clients, sb_factures
-// Each row is identified by a fixed key column (text)
+// ── Supabase credentials ─────────────────────────────────────────────────
+// Fill these two lines with your Supabase project URL and anon key.
+// Once filled, the app connects automatically on every device — no setup needed.
+const SB_URL_DEFAULT = 'https://hpdvsipzgruxiumccgls.supabase.co';   // ← paste your Project URL here  e.g. https://xxxx.supabase.co
+const SB_KEY_DEFAULT = 'sb_publishable_MBSZFlAsr1VfdXhDijsMww_wYR5fqrj';   // ← paste your anon/public key here
+
+// Runtime state
 let sbUrl  = '';
 let sbKey  = '';
 let sbSyncing  = false;
@@ -744,6 +749,16 @@ let sbPending  = false;
 let sbConnected = false;
 
 function sbLoadCreds() {
+  // Priority 1: hardcoded constants (works on any device automatically)
+  if (SB_URL_DEFAULT && SB_KEY_DEFAULT) {
+    sbUrl = SB_URL_DEFAULT;
+    sbKey = SB_KEY_DEFAULT;
+    // Also save to localStorage so the modal pre-fills correctly
+    localStorage.setItem('sb-url', sbUrl);
+    localStorage.setItem('sb-key', sbKey);
+    return true;
+  }
+  // Priority 2: previously saved in localStorage (manual connect)
   sbUrl = localStorage.getItem('sb-url') || '';
   sbKey = localStorage.getItem('sb-key') || '';
   return !!(sbUrl && sbKey);
@@ -831,7 +846,9 @@ function supabaseConnect() {
             alter table sb_clients disable row level security;<br>
             alter table sb_factures disable row level security;
           </div>
-          4. ${lang==='fr'?'Settings → API → copiez Project URL et anon/public key ci-dessous':'Settings → API → másolja a Project URL-t és az anon/public key-t ide'}
+          4. ${lang==='fr'?'Settings → API → copiez Project URL et anon/public key':'Settings → API → másolja a Project URL-t és az anon/public kulcsot'}<br>
+          &nbsp;&nbsp;&nbsp;• ${lang==='fr'?'Option A (recommandé) : collez-les ci-dessous pour cette session':'A lehetőség (ajánlott) : illessze be alább ehhez a munkamenethez'}<br>
+          &nbsp;&nbsp;&nbsp;• ${lang==='fr'?'Option B (multi-appareils) : collez-les dans le fichier HTML dans les constantes SB_URL_DEFAULT et SB_KEY_DEFAULT, puis re-déployez sur GitHub Pages':'B lehetőség (több eszközhöz) : illessze be a HTML fájlba az SB_URL_DEFAULT és SB_KEY_DEFAULT konstansokba, majd töltse fel újra GitHub Pages-re'}
         </div>
         <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px">
           <div>
@@ -919,6 +936,7 @@ async function sbDoConnect() {
     localStorage.setItem('sb-url', url);
     localStorage.setItem('sb-key', key);
     sbConnected = true;
+    console.log('[Supabase] Connected manually to', url);
     document.getElementById('sb-overlay').remove();
     sbSetBtnLabel('Supabase ✓');
     sbSetStatus('⏳ ' + (lang==='fr' ? 'Chargement…' : 'Betöltés…'), null);
@@ -1920,7 +1938,9 @@ function initAll(){
       sbConnected = true;
       sbSetBtnLabel('Supabase ✓');
       sbSetStatus('⏳ ' + (lang==='fr' ? 'Chargement cloud…' : 'Felhő betöltés…'), null);
-      setTimeout(() => sbLoadFromCloud(), 600);
+      // Load immediately (no delay) when credentials are hardcoded
+      const delay = (SB_URL_DEFAULT && SB_KEY_DEFAULT) ? 0 : 600;
+      setTimeout(() => sbLoadFromCloud(), delay);
     }
   }
 }
