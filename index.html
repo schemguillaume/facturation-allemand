@@ -1054,9 +1054,16 @@ async function sbLoadFromCloud() {
 
     if (cloudEmpty) {
       console.log('[Supabase] Cloud empty → pushing local data');
-      await sbSaveToCloud(true);
-      const now = new Date().toLocaleTimeString(T[lang].locale,{hour:'2-digit',minute:'2-digit'});
-      sbSetStatus('☁ ' + (lang==='fr' ? 'Données envoyées ' : 'Feltöltve ') + now, true);
+      try {
+        await sbSaveToCloud(true);
+        const now = new Date().toLocaleTimeString(T[lang].locale,{hour:'2-digit',minute:'2-digit'});
+        sbSetStatus('☁ ' + (lang==='fr' ? 'Données envoyées ' : 'Feltöltve ') + now, true);
+      } catch(saveErr) {
+        console.error('[Supabase] Push to cloud failed:', saveErr);
+        sbSetStatus('⚠ ' + saveErr.message.slice(0,50), false);
+      }
+      // Always refresh UI with local data even if push failed
+      try { refreshUI(); } catch(e) {}
       return;
     }
 
@@ -1077,15 +1084,25 @@ async function sbLoadFromCloud() {
     localStorage.setItem('facturation-allemand-v3', JSON.stringify(state));
 
     // Refresh all UI panels with cloud data
-    refreshUI();
+    try {
+      refreshUI();
+    } catch(uiErr) {
+      console.error('[Supabase] refreshUI error:', uiErr);
+      // Try each panel individually so a failure in one doesn't block others
+      try { loadParametresUI(); } catch(e) { console.error('loadParametresUI:', e); }
+      try { renderTableClients(); } catch(e) { console.error('renderTableClients:', e); }
+      try { renderSuivi(); } catch(e) { console.error('renderSuivi:', e); }
+    }
 
     const now = new Date().toLocaleTimeString(T[lang].locale,{hour:'2-digit',minute:'2-digit'});
     sbSetStatus('☁ Supabase ' + now, true);
-    console.log('[Supabase] UI refreshed at', now);
+    console.log('[Supabase] Load complete at', now);
 
   } catch(e) {
     console.error('[Supabase] Load error:', e);
     sbSetStatus('⚠ ' + e.message.slice(0, 60), false);
+    // Even on error, try to show whatever data we have
+    try { refreshUI(); } catch(e2) {}
   }
 }
 
@@ -1910,13 +1927,14 @@ function renderSuivi(){
   const totalEur=state.factures.reduce((s,f)=>s+f.montantEur,0);
   const encaisse=state.factures.filter(f=>f.statut===t('statut_payee')||f.statut==='Payée').reduce((s,f)=>s+f.montantEur,0);
   const enRetard=state.factures.filter(f=>f.statut===t('statut_retard')||f.statut==='En retard').reduce((s,f)=>s+f.montantEur,0);
-  document.getElementById('stats-bloc').innerHTML=`
+  const statsBl=document.getElementById('stats-bloc'); if(!statsBl) return;
+  statsBl.innerHTML=`
     <div class="stat"><div class="lbl">${t('stat_nb')}</div><div class="val">${state.factures.length}</div></div>
     <div class="stat"><div class="lbl">${t('stat_total')}</div><div class="val">${totalEur.toLocaleString(T[lang].locale,{maximumFractionDigits:0})} €</div></div>
     <div class="stat"><div class="lbl">${t('stat_encaisse')}</div><div class="val" style="color:var(--green)">${encaisse.toLocaleString(T[lang].locale,{maximumFractionDigits:0})} €</div></div>
     <div class="stat"><div class="lbl">${t('stat_attente')}</div><div class="val" style="color:var(--orange)">${(totalEur-encaisse-enRetard).toLocaleString(T[lang].locale,{maximumFractionDigits:0})} €</div></div>
     <div class="stat"><div class="lbl">${t('stat_retard')}</div><div class="val" style="color:var(--red)">${enRetard.toLocaleString(T[lang].locale,{maximumFractionDigits:0})} €</div></div>`;
-  const tbody=document.getElementById('tbody-suivi');
+  const tbody=document.getElementById('tbody-suivi'); if(!tbody) return;
   if(!list.length){tbody.innerHTML=`<tr class="empty-row"><td colspan="9">${t('empty_factures')}</td></tr>`;return;}
   const today=new Date().toISOString().slice(0,10);
   tbody.innerHTML=list.map(f=>{
@@ -1994,7 +2012,7 @@ function refreshUI(){
 
 function initAll(){
   load(); // load from localStorage into state
-  refreshUI(); // render UI from state
+  refreshUI(); // render UI from local state (will be overwritten by Supabase shortly)
   // Auto-reconnect Supabase if credentials saved
   if (sbLoadCreds()) {
     if (window.location.protocol === 'file:') {
