@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
+<!-- saved from url=(0094)file:///C:/Users/IGSC6670/OneDrive%20-%20France%20Travail/Downloads/FacturationAllemand_4.html -->
+<html lang="fr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title id="page-title">Facturation – Cours d'allemand</title>
 <style>
@@ -109,35 +109,35 @@ tbody tr:hover td{background:var(--bg2)}
 
 <header>
   <div>
-    <h1 id="h-title">&#127891; Cours d'allemand — Facturation</h1>
-    <div class="sub" id="header-sub">Auto-entrepreneur</div>
+    <h1 id="h-title">🎓 Cours d'allemand — Facturation</h1>
+    <div class="sub" id="header-sub">Eva EMBER</div>
   </div>
   <div class="hdr-right">
     <div class="lang-switch">
-      <button class="lang-btn active" id="btn-lang-fr" onclick="setLang('fr')">FR</button>
+      <button class="lang-btn active" id="btn-lang-fr" onclick="setLang(&#39;fr&#39;)">FR</button>
       <div class="lang-sep"></div>
-      <button class="lang-btn" id="btn-lang-hu" onclick="setLang('hu')">HU</button>
+      <button class="lang-btn" id="btn-lang-hu" onclick="setLang(&#39;hu&#39;)">HU</button>
     </div>
-    <div class="saved-pill" id="save-indicator">&#10003;</div>
+    <div class="saved-pill" id="save-indicator" style="background: rgba(255, 100, 100, 0.3);">⚠ Ouvrez via serveur (pas file://)</div>
     <!-- Supabase sync button -->
     <button class="btn sm" id="btn-supabase" onclick="supabaseConnect()" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3);gap:5px">
-      <svg width="14" height="14" viewBox="0 0 109 113" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><path d="M63.7 110.3c-2.9 3.7-9 1.7-9-3V62h42.4c3.9 0 6 4.6 3.5 7.5L63.7 110.3z" fill="#3ECF8E"/><path d="M63.7 110.3c-2.9 3.7-9 1.7-9-3V62h42.4c3.9 0 6 4.6 3.5 7.5L63.7 110.3z" fill="url(#a)" fill-opacity=".3"/><path d="M45.3 2.7c2.9-3.7 9-1.7 9 3V51H11.9c-3.9 0-6-4.6-3.5-7.5L45.3 2.7z" fill="#3ECF8E"/><defs><linearGradient id="a" x1="55" y1="55" x2="97" y2="108" gradientUnits="userSpaceOnUse"><stop stop-color="#249361"/><stop offset="1" stop-color="#3ECF8E" stop-opacity="0"/></linearGradient></defs></svg>
-      <span id="supabase-btn-label">Supabase</span>
+      <svg width="14" height="14" viewBox="0 0 109 113" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><path d="M63.7 110.3c-2.9 3.7-9 1.7-9-3V62h42.4c3.9 0 6 4.6 3.5 7.5L63.7 110.3z" fill="#3ECF8E"></path><path d="M63.7 110.3c-2.9 3.7-9 1.7-9-3V62h42.4c3.9 0 6 4.6 3.5 7.5L63.7 110.3z" fill="url(#a)" fill-opacity=".3"></path><path d="M45.3 2.7c2.9-3.7 9-1.7 9 3V51H11.9c-3.9 0-6-4.6-3.5-7.5L45.3 2.7z" fill="#3ECF8E"></path><defs><lineargradient id="a" x1="55" y1="55" x2="97" y2="108" gradientUnits="userSpaceOnUse"><stop stop-color="#249361"></stop><stop offset="1" stop-color="#3ECF8E" stop-opacity="0"></stop></lineargradient></defs></svg>
+      <span id="supabase-btn-label">Supabase ⚠</span>
     </button>
-    <button class="btn sm" onclick="exportData()" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3)" data-t="export">&#8681; Exporter</button>
-    <button class="btn sm" onclick="document.getElementById('import-file').click()" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3)" data-t="import">&#8679; Importer</button>
+    <button class="btn sm" onclick="exportData()" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3)" data-t="export">↓ Exporter</button>
+    <button class="btn sm" onclick="document.getElementById(&#39;import-file&#39;).click()" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3)" data-t="import">↑ Importer</button>
     <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
   </div>
 </header>
 
 <div class="main">
 <nav id="main-nav">
-  <button class="active" onclick="showPanel('parametres')"><span class="ico">&#9881;</span><span class="nav-label" data-t="nav_params">Paramètres</span></button>
-  <button onclick="showPanel('clients')"><span class="ico">&#128100;</span><span class="nav-label" data-t="nav_clients">Clients</span></button>
-  <button onclick="showPanel('devises')"><span class="ico">&#128178;</span><span class="nav-label" data-t="nav_devises">Devises</span></button>
-  <button onclick="showPanel('facture')"><span class="ico">&#128196;</span><span class="nav-label" data-t="nav_facture">Facture</span></button>
-  <button onclick="showPanel('suivi')"><span class="ico">&#128202;</span><span class="nav-label" data-t="nav_suivi">Suivi</span></button>
-  <button onclick="showPanel('guide')"><span class="ico">&#9878;</span><span class="nav-label" data-t="nav_guide">Guide légal</span></button>
+  <button class="active" onclick="showPanel(&#39;parametres&#39;)"><span class="ico">⚙</span><span class="nav-label" data-t="nav_params">Paramètres</span></button>
+  <button onclick="showPanel(&#39;clients&#39;)"><span class="ico">👤</span><span class="nav-label" data-t="nav_clients">Clients</span></button>
+  <button onclick="showPanel(&#39;devises&#39;)"><span class="ico">💲</span><span class="nav-label" data-t="nav_devises">Devises</span></button>
+  <button onclick="showPanel(&#39;facture&#39;)"><span class="ico">📄</span><span class="nav-label" data-t="nav_facture">Facture</span></button>
+  <button onclick="showPanel(&#39;suivi&#39;)"><span class="ico">📊</span><span class="nav-label" data-t="nav_suivi">Suivi</span></button>
+  <button onclick="showPanel(&#39;guide&#39;)"><span class="ico">⚖</span><span class="nav-label" data-t="nav_guide">Guide légal</span></button>
 </nav>
 
 <div class="content">
@@ -145,34 +145,61 @@ tbody tr:hover td{background:var(--bg2)}
 <!-- PARAMÈTRES -->
 <div id="panel-parametres" class="panel active">
   <div class="card">
-    <div class="card-title"><h2>&#127968; <span data-t="params_info">Vos informations</span></h2></div>
+    <div class="card-title"><h2>🏠 <span data-t="params_info">Vos informations</span></h2></div>
     <div class="form-grid fg-3">
-      <div class="field span2"><label data-t="p_nom_lbl">Nom &amp; prénom (+ EI) <span class="req">*</span></label><input id="p-nom" placeholder="Dupont Marie EI"></div>
-      <div class="field"><label data-t="p_siret_lbl">SIRET <span class="req">*</span></label><input id="p-siret" placeholder="000 000 000 00000"></div>
+      <div class="field span2"><label data-t="p_nom_lbl">Nom &amp; prénom (+ EI) *</label><input id="p-nom" placeholder="Dupont Marie EI"></div>
+      <div class="field"><label data-t="p_siret_lbl">SIRET *</label><input id="p-siret" placeholder="000 000 000 00000"></div>
       <div class="field span2"><label data-t="p_adr1_lbl">Adresse ligne 1</label><input id="p-adr1"></div>
       <div class="field"><label data-t="p_adr2_lbl">Adresse ligne 2</label><input id="p-adr2"></div>
       <div class="field"><label data-t="p_ville_lbl">Code postal &amp; Ville</label><input id="p-ville"></div>
       <div class="field"><label data-t="p_tel_lbl">Téléphone</label><input id="p-tel"></div>
       <div class="field"><label>Email</label><input id="p-email" type="email"></div>
       <div class="field"><label>Code APE / NAF</label><input id="p-ape" value="8559Z"></div>
-      <div class="field span2"><label>IBAN</label><input id="p-iban" placeholder="FR76 XXXX…"></div>
       <div class="field"><label data-t="p_tva_intra_lbl">N° TVA intracommunautaire</label><input id="p-tva-intra" placeholder="FR XX XXXXXXXXX"></div>
     </div>
   </div>
+  <!-- ── COMPTES BANCAIRES ───────────────────────────────────────── -->
+  <div class="card" id="card-banques">
+    <div class="card-title">
+      <h2>🏭 <span data-t="params_banques">Comptes bancaires</span></h2>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:11px;color:var(--text2)" data-t="banque_active_lbl">Compte actif :</span>
+        <select id="p-banque-active" onchange="changerBanqueActive()" style="font-size:12px;padding:4px 8px"><option value="">— Aucun compte —</option></select>
+      </div>
+    </div>
+    <!-- Liste des banques -->
+    <div id="banques-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px"><div style="font-size:12px;color:var(--text3);font-style:italic;padding:6px 0">— Aucun compte —</div></div>
+    <!-- Formulaire ajout -->
+    <div style="background:var(--bg2);border:1px dashed var(--border2);border-radius:var(--radius-lg);padding:12px 14px">
+      <h3 style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px" data-t="banque_add_title">Ajouter un compte</h3>
+      <div class="form-grid fg-4" style="margin-bottom:10px">
+        <div class="field span2"><label data-t="banque_nom_lbl">Nom de la banque *</label><input id="nb-nom" placeholder="Crédit Agricole, OTP Bank…"></div>
+        <div class="field span2"><label>IBAN <span class="req">*</span></label><input id="nb-iban" placeholder="FR76 XXXX… / HU00 XXXX…"></div>
+        <div class="field"><label>SWIFT / BIC</label><input id="nb-swift" placeholder="AGRIFRPP…"></div>
+        <div class="field"><label data-t="dev_facturee">Devise facturée</label><select id="nb-devise"><option value="EUR">EUR – Euro</option><option value="HUF">HUF – Forint hongrois</option><option value="USD">USD – Dollar américain</option><option value="GBP">GBP – Livre sterling</option><option value="CHF">CHF – Franc suisse</option><option value="PLN">PLN – Złoty polonais</option></select></div>
+        <div class="field span2"><label data-t="c_pays_lbl">Pays</label><input id="nb-pays" placeholder="France, Hongrie…"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn primary sm" onclick="ajouterBanque()" data-t="banque_btn_add">+ Ajouter ce compte</button>
+        <span id="toast-banque" class="toast"></span>
+      </div>
+    </div>
+  </div>
+
   <div class="card">
-    <div class="card-title"><h2>&#128203; <span data-t="params_legal">Mentions légales &amp; conditions</span></h2></div>
+    <div class="card-title"><h2>📋 <span data-t="params_legal">Mentions légales &amp; conditions</span></h2></div>
     <div class="form-grid fg-3">
       <div class="field"><label data-t="p_delai_lbl">Délai de paiement (jours)</label><input id="p-delai" type="number" value="30"></div>
       <div class="field span2"><label data-t="p_penalites_lbl">Pénalités de retard</label><input id="p-penalites" value="Taux légal en vigueur × 3"></div>
       <div class="field span3"><label data-t="p_tva_fr_lbl">Mention TVA – Client France / UE particulier</label><input id="p-mention-tva-fr" value="TVA non applicable, art. 293 B du CGI"></div>
       <div class="field span3"><label data-t="p_tva_ue_lbl">Mention TVA – Client professionnel UE</label><input id="p-mention-tva-ue" value="TVA non applicable, art. 293 B du CGI – Autoliquidation par le preneur (art. 283-2 CGI)"></div>
       <div class="field span3"><label data-t="p_escompte_lbl">Escompte</label><input id="p-escompte" value="Aucun escompte pour paiement anticipé"></div>
-      <div class="field span3"><label data-t="p_pied1_lbl">Pied de facture ligne 1</label><input id="p-pied1" value="Merci de votre confiance – Cours d'allemand tous niveaux"></div>
+      <div class="field span3"><label data-t="p_pied1_lbl">Pied de facture ligne 1</label><input id="p-pied1" value="Merci de votre confiance – Cours d&#39;allemand tous niveaux"></div>
       <div class="field span3"><label data-t="p_pied2_lbl">Pied de facture ligne 2</label><input id="p-pied2" value="Règlement par virement bancaire uniquement"></div>
     </div>
   </div>
   <div class="card">
-    <div class="card-title"><h2>&#128176; <span data-t="params_tarifs">Tarifs par défaut</span></h2></div>
+    <div class="card-title"><h2>💰 <span data-t="params_tarifs">Tarifs par défaut</span></h2></div>
     <div class="form-grid fg-4">
       <div class="field"><label data-t="t_indiv_lbl">Cours individuel (€/h)</label><input id="t-indiv" type="number" value="45"></div>
       <div class="field"><label data-t="t_duo_lbl">Cours duo (€/h)</label><input id="t-duo" type="number" value="30"></div>
@@ -182,7 +209,7 @@ tbody tr:hover td{background:var(--bg2)}
     </div>
   </div>
   <div class="btn-row">
-    <button class="btn primary" onclick="sauvegarderParametres()" data-t="btn_save_params">&#10003; Enregistrer les paramètres</button>
+    <button class="btn primary" onclick="sauvegarderParametres()" data-t="btn_save_params">✓ Enregistrer les paramètres</button>
     <span id="toast-param" class="toast"></span>
   </div>
 </div>
@@ -190,12 +217,12 @@ tbody tr:hover td{background:var(--bg2)}
 <!-- CLIENTS -->
 <div id="panel-clients" class="panel">
   <div class="card">
-    <div class="card-title"><h2 id="form-client-title">&#10133; <span data-t="client_new">Nouveau client</span></h2></div>
+    <div class="card-title"><h2 id="form-client-title">➕ <span data-t="client_new">Nouveau client</span></h2></div>
     <div class="form-grid fg-4">
-      <div class="field"><label data-t="c_ref_lbl">Référence <span class="req">*</span></label><input id="c-ref" readonly style="background:var(--bg2);color:var(--text2);font-weight:600"><span id="c-ref-note" style="font-size:11px;color:var(--text3);margin-top:3px">&#128274; Générée automatiquement</span></div>
-      <div class="field span2"><label data-t="c_nom_lbl">Nom / Raison sociale <span class="req">*</span></label><input id="c-nom"></div>
+      <div class="field"><label data-t="c_ref_lbl">Référence *</label><input id="c-ref" readonly="" style="background:var(--bg2);color:var(--text2);font-weight:600"><span id="c-ref-note" style="font-size:11px;color:var(--text3);margin-top:3px">🔒 Générée automatiquement</span></div>
+      <div class="field span2"><label data-t="c_nom_lbl">Nom / Raison sociale *</label><input id="c-nom"></div>
       <div class="field"><label data-t="c_prenom_lbl">Prénom</label><input id="c-prenom"></div>
-      <div class="field span2"><label data-t="c_email_lbl">Email <span class="req">*</span></label><input id="c-email" type="email"></div>
+      <div class="field span2"><label data-t="c_email_lbl">Email *</label><input id="c-email" type="email"></div>
       <div class="field"><label data-t="c_tel_lbl">Téléphone</label><input id="c-tel"></div>
       <div class="field"><label data-t="c_type_lbl">Type</label>
         <select id="c-type">
@@ -209,7 +236,7 @@ tbody tr:hover td{background:var(--bg2)}
       <div class="field"><label data-t="c_ville_lbl">Ville</label><input id="c-ville"></div>
       <div class="field"><label data-t="c_pays_lbl">Pays</label><input id="c-pays"></div>
       <div class="field"><label data-t="c_tva_lbl">SIREN / N° TVA intracom</label><input id="c-tva"></div>
-      <div class="field"><label data-t="c_devise_lbl">Devise préférée</label><select id="c-devise"></select></div>
+      <div class="field"><label data-t="c_devise_lbl">Devise préférée</label><select id="c-devise"><option value="EUR">EUR – Euro (€)</option><option value="HUF">HUF – Forint hongrois (Ft)</option><option value="USD">USD – Dollar américain ($)</option><option value="GBP">GBP – Livre sterling (£)</option><option value="CHF">CHF – Franc suisse (CHF)</option><option value="PLN">PLN – Złoty polonais (zł)</option></select></div>
       <div class="field"><label data-t="c_tarif_lbl">Tarif horaire (€/h)</label><input id="c-tarif" type="number"></div>
       <div class="field"><label data-t="c_niveau_lbl">Niveau</label>
         <select id="c-niveau"><option>A1</option><option>A2</option><option>B1</option><option>B2</option><option>C1</option><option>C2</option></select>
@@ -218,15 +245,15 @@ tbody tr:hover td{background:var(--bg2)}
     </div>
     <div class="btn-row" style="margin-top:10px">
       <button id="btn-ajouter-client" class="btn primary" onclick="ajouterClient()" data-t="btn_add_client">+ Ajouter ce client</button>
-      <button id="btn-annuler-edit" class="btn" onclick="viderFormClient()" style="display:none" data-t="btn_cancel_edit">&#10005; Annuler la modification</button>
+      <button id="btn-annuler-edit" class="btn" onclick="viderFormClient()" style="display:none" data-t="btn_cancel_edit">✕ Annuler la modification</button>
       <button class="btn" onclick="viderFormClient()" data-t="btn_clear">Effacer</button>
       <span id="toast-client" class="toast"></span>
     </div>
   </div>
   <div class="card">
     <div class="card-title">
-      <h2>&#128101; <span data-t="client_base">Base clients</span> (<span id="nb-clients">0</span>)</h2>
-      <input type="text" id="search-client" oninput="renderTableClients()" style="width:170px;padding:5px 9px;font-size:12px" data-t-ph="search_ph">
+      <h2>👥 <span data-t="client_base">Base clients</span> (<span id="nb-clients">4</span>)</h2>
+      <input type="text" id="search-client" oninput="renderTableClients()" style="width:170px;padding:5px 9px;font-size:12px" data-t-ph="search_ph" placeholder="Rechercher…">
     </div>
     <div class="tbl-wrap">
       <table>
@@ -236,7 +263,63 @@ tbody tr:hover td{background:var(--bg2)}
           <th data-t="th_tva">N° TVA</th><th data-t="th_devise">Devise</th>
           <th data-t="th_tarif">Tarif</th><th data-t="th_actions">Actions</th>
         </tr></thead>
-        <tbody id="tbody-clients"></tbody>
+        <tbody id="tbody-clients">
+    <tr>
+      <td><strong>CLI001</strong></td>
+      <td>Szalai Bagó Tünde</td>
+      <td style="color:var(--text2);font-size:12px">—</td>
+      <td><span class="badge ">Particulier</span></td>
+      <td>Germany</td><td style="font-size:11px">—</td>
+      <td><span class="badge eur">EUR</span></td>
+      <td>40 €/h</td>
+      <td style="white-space:nowrap;display:flex;gap:3px">
+        <button class="btn xs" onclick="modifierClient(&#39;CLI001&#39;)" style="color:var(--accent2);border-color:var(--accent2)">✎ Modifier</button>
+        <button class="btn xs" onclick="chargerClientDansFacture(&#39;CLI001&#39;)">Facturer</button>
+        <button class="btn xs danger" onclick="supprimerClient(&#39;CLI001&#39;)">Suppr.</button>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>CLI002</strong></td>
+      <td>Miko - Kövesdi Andrea</td>
+      <td style="color:var(--text2);font-size:12px">—</td>
+      <td><span class="badge ">Particulier</span></td>
+      <td>Switzerland</td><td style="font-size:11px">—</td>
+      <td><span class="badge eur">EUR</span></td>
+      <td>40 €/h</td>
+      <td style="white-space:nowrap;display:flex;gap:3px">
+        <button class="btn xs" onclick="modifierClient(&#39;CLI002&#39;)" style="color:var(--accent2);border-color:var(--accent2)">✎ Modifier</button>
+        <button class="btn xs" onclick="chargerClientDansFacture(&#39;CLI002&#39;)">Facturer</button>
+        <button class="btn xs danger" onclick="supprimerClient(&#39;CLI002&#39;)">Suppr.</button>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>CLI003</strong></td>
+      <td>DOVER Dover Nyelvi Centrum</td>
+      <td style="color:var(--text2);font-size:12px">—</td>
+      <td><span class="badge ue">Professionnel UE</span></td>
+      <td>Hungary</td><td style="font-size:11px">—</td>
+      <td><span class="badge huf">HUF</span></td>
+      <td>5000 €/h</td>
+      <td style="white-space:nowrap;display:flex;gap:3px">
+        <button class="btn xs" onclick="modifierClient(&#39;CLI003&#39;)" style="color:var(--accent2);border-color:var(--accent2)">✎ Modifier</button>
+        <button class="btn xs" onclick="chargerClientDansFacture(&#39;CLI003&#39;)">Facturer</button>
+        <button class="btn xs danger" onclick="supprimerClient(&#39;CLI003&#39;)">Suppr.</button>
+      </td>
+    </tr>
+    <tr>
+      <td><strong>DOVER</strong></td>
+      <td>toto titi</td>
+      <td style="color:var(--text2);font-size:12px">—</td>
+      <td><span class="badge ">Particulier</span></td>
+      <td>FRANCE</td><td style="font-size:11px">—</td>
+      <td><span class="badge eur">EUR</span></td>
+      <td>—</td>
+      <td style="white-space:nowrap;display:flex;gap:3px">
+        <button class="btn xs" onclick="modifierClient(&#39;DOVER&#39;)" style="color:var(--accent2);border-color:var(--accent2)">✎ Modifier</button>
+        <button class="btn xs" onclick="chargerClientDansFacture(&#39;DOVER&#39;)">Facturer</button>
+        <button class="btn xs danger" onclick="supprimerClient(&#39;DOVER&#39;)">Suppr.</button>
+      </td>
+    </tr></tbody>
       </table>
     </div>
   </div>
@@ -245,34 +328,82 @@ tbody tr:hover td{background:var(--bg2)}
 <!-- DEVISES -->
 <div id="panel-devises" class="panel">
   <div class="card">
-    <div class="card-title"><h2>&#9881; <span data-t="dev_active">Devise active</span></h2></div>
+    <div class="card-title"><h2>⚙ <span data-t="dev_active">Devise active</span></h2></div>
     <div class="form-grid fg-4">
-      <div class="field"><label data-t="dev_facturee">Devise facturée</label><select id="devise-active" onchange="changerDeviseActive()"></select></div>
-      <div class="field"><label data-t="dev_symbole">Symbole</label><input id="d-sym" readonly></div>
+      <div class="field"><label data-t="dev_facturee">Devise facturée</label><select id="devise-active" onchange="changerDeviseActive()"><option value="EUR">EUR – Euro (€)</option><option value="HUF">HUF – Forint hongrois (Ft)</option><option value="USD">USD – Dollar américain ($)</option><option value="GBP">GBP – Livre sterling (£)</option><option value="CHF">CHF – Franc suisse (CHF)</option><option value="PLN">PLN – Złoty polonais (zł)</option></select></div>
+      <div class="field"><label data-t="dev_symbole">Symbole</label><input id="d-sym" readonly=""></div>
       <div class="field"><label data-t="dev_taux_lbl">Taux (1 EUR = X devise)</label><input id="d-taux-actif" type="number" step="0.0001" oninput="majTauxActif()"></div>
       <div class="field"><label data-t="dev_date_lbl">Date mise à jour</label><input id="d-date-maj" type="date"></div>
     </div>
     <div style="margin-top:11px">
       <div class="devise-active" id="devise-banner">
-        <span class="devise-sym eur" id="d-icon">€</span>
-        <div><div style="font-weight:600;font-size:14px" id="d-banner-title">Euro (EUR)</div><div style="font-size:12px;color:var(--text2)" id="d-banner-sub">1 EUR = 1.0000 EUR</div></div>
+        <span class="devise-sym huf" id="d-icon">Ft</span>
+        <div><div style="font-weight:600;font-size:14px" id="d-banner-title">Forint hongrois (HUF)</div><div style="font-size:12px;color:var(--text2)" id="d-banner-sub">1 EUR = 400.0000 HUF</div></div>
       </div>
     </div>
   </div>
   <div class="card">
-    <div class="card-title"><h2>&#128201; <span data-t="dev_table">Table des taux de change</span></h2></div>
+    <div class="card-title"><h2>📉 <span data-t="dev_table">Table des taux de change</span></h2></div>
     <div class="tbl-wrap">
       <table>
         <thead><tr>
           <th data-t="th_code">Code</th><th data-t="th_nom_dev">Nom</th><th data-t="dev_symbole">Symbole</th>
-          <th>1 EUR =</th><th data-t="dev_date_lbl">Mise à jour</th><th data-t="th_source">Source</th><th data-t="th_actions">Actions</th>
+          <th>1 EUR =</th><th data-t="dev_date_lbl">Date mise à jour</th><th data-t="th_source">Source</th><th data-t="th_actions">Actions</th>
         </tr></thead>
-        <tbody id="tbody-devises"></tbody>
+        <tbody id="tbody-devises">
+    <tr>
+      <td><strong>EUR</strong></td><td>Euro</td>
+      <td style="font-size:16px;font-weight:600;color:var(--eur)">€</td>
+      <td><input type="number" step="0.0001" value="1" style="width:88px;padding:3px 7px;border:1px solid var(--border2);border-radius:6px;font-size:12px" onchange="majTauxLigne(0,this.value)"></td>
+      <td style="font-size:11px;color:var(--text2)">—</td>
+      <td style="font-size:11px;color:var(--text2)">Devise de base</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><strong>HUF</strong></td><td>Forint hongrois</td>
+      <td style="font-size:16px;font-weight:600;color:var(--huf)">Ft</td>
+      <td><input type="number" step="0.0001" value="400" style="width:88px;padding:3px 7px;border:1px solid var(--border2);border-radius:6px;font-size:12px" onchange="majTauxLigne(1,this.value)"></td>
+      <td style="font-size:11px;color:var(--text2)">—</td>
+      <td style="font-size:11px;color:var(--text2)">mnb.hu / xe.com</td>
+      <td><button class="btn xs danger" onclick="supprimerDevise(&#39;HUF&#39;)">Suppr.</button></td>
+    </tr>
+    <tr>
+      <td><strong>USD</strong></td><td>Dollar américain</td>
+      <td style="font-size:16px;font-weight:600;color:var(--eur)">$</td>
+      <td><input type="number" step="0.0001" value="1.08" style="width:88px;padding:3px 7px;border:1px solid var(--border2);border-radius:6px;font-size:12px" onchange="majTauxLigne(2,this.value)"></td>
+      <td style="font-size:11px;color:var(--text2)">—</td>
+      <td style="font-size:11px;color:var(--text2)">ecb.europa.eu</td>
+      <td><button class="btn xs danger" onclick="supprimerDevise(&#39;USD&#39;)">Suppr.</button></td>
+    </tr>
+    <tr>
+      <td><strong>GBP</strong></td><td>Livre sterling</td>
+      <td style="font-size:16px;font-weight:600;color:var(--eur)">£</td>
+      <td><input type="number" step="0.0001" value="0.85" style="width:88px;padding:3px 7px;border:1px solid var(--border2);border-radius:6px;font-size:12px" onchange="majTauxLigne(3,this.value)"></td>
+      <td style="font-size:11px;color:var(--text2)">—</td>
+      <td style="font-size:11px;color:var(--text2)">ecb.europa.eu</td>
+      <td><button class="btn xs danger" onclick="supprimerDevise(&#39;GBP&#39;)">Suppr.</button></td>
+    </tr>
+    <tr>
+      <td><strong>CHF</strong></td><td>Franc suisse</td>
+      <td style="font-size:16px;font-weight:600;color:var(--eur)">CHF</td>
+      <td><input type="number" step="0.0001" value="0.96" style="width:88px;padding:3px 7px;border:1px solid var(--border2);border-radius:6px;font-size:12px" onchange="majTauxLigne(4,this.value)"></td>
+      <td style="font-size:11px;color:var(--text2)">—</td>
+      <td style="font-size:11px;color:var(--text2)">snb.ch</td>
+      <td><button class="btn xs danger" onclick="supprimerDevise(&#39;CHF&#39;)">Suppr.</button></td>
+    </tr>
+    <tr>
+      <td><strong>PLN</strong></td><td>Złoty polonais</td>
+      <td style="font-size:16px;font-weight:600;color:var(--eur)">zł</td>
+      <td><input type="number" step="0.0001" value="4.25" style="width:88px;padding:3px 7px;border:1px solid var(--border2);border-radius:6px;font-size:12px" onchange="majTauxLigne(5,this.value)"></td>
+      <td style="font-size:11px;color:var(--text2)">—</td>
+      <td style="font-size:11px;color:var(--text2)">nbp.pl</td>
+      <td><button class="btn xs danger" onclick="supprimerDevise(&#39;PLN&#39;)">Suppr.</button></td>
+    </tr></tbody>
       </table>
     </div>
   </div>
   <div class="card">
-    <div class="card-title"><h2>&#10133; <span data-t="dev_ajouter">Ajouter une devise</span></h2></div>
+    <div class="card-title"><h2>➕ <span data-t="dev_ajouter">Ajouter une devise</span></h2></div>
     <div class="form-grid fg-5">
       <div class="field"><label data-t="dev_code_iso">Code ISO</label><input id="nd-code" placeholder="PLN" maxlength="3" style="text-transform:uppercase"></div>
       <div class="field"><label data-t="dev_nom_complet">Nom complet</label><input id="nd-nom"></div>
@@ -281,17 +412,17 @@ tbody tr:hover td{background:var(--bg2)}
       <div class="field"><label data-t="th_source">Source</label><input id="nd-src"></div>
     </div>
     <div class="btn-row" style="margin-top:9px">
-      <button class="btn primary" onclick="ajouterDevise()" data-t="btn_add_devise">&#10133; Ajouter</button>
+      <button class="btn primary" onclick="ajouterDevise()" data-t="btn_add_devise">+ Ajouter</button>
       <span id="toast-devise" class="toast"></span>
     </div>
   </div>
   <div class="card">
-    <div class="card-title"><h2>&#128260; <span data-t="conv_title">Convertisseur rapide</span></h2></div>
+    <div class="card-title"><h2>🔄 <span data-t="conv_title">Convertisseur rapide</span></h2></div>
     <div class="form-grid fg-4">
       <div class="field"><label data-t="conv_montant">Montant en EUR</label><input id="conv-eur" type="number" value="100" step="0.01" oninput="convertir()"></div>
-      <div class="field"><label data-t="conv_vers">Vers la devise</label><select id="conv-vers" onchange="convertir()"></select></div>
-      <div class="field"><label data-t="conv_resultat">Résultat</label><div class="conv-result" id="conv-res">—</div></div>
-      <div class="field"><label data-t="conv_retour">Retour EUR (vérif.)</label><div class="conv-result" id="conv-retour" style="font-size:14px;color:var(--text2)">—</div></div>
+      <div class="field"><label data-t="conv_vers">Vers la devise</label><select id="conv-vers" onchange="convertir()"><option value="EUR">EUR – Euro (€)</option><option value="HUF">HUF – Forint hongrois (Ft)</option><option value="USD">USD – Dollar américain ($)</option><option value="GBP">GBP – Livre sterling (£)</option><option value="CHF">CHF – Franc suisse (CHF)</option><option value="PLN">PLN – Złoty polonais (zł)</option></select></div>
+      <div class="field"><label data-t="conv_resultat">Résultat</label><div class="conv-result" id="conv-res">100.00 €</div></div>
+      <div class="field"><label data-t="conv_retour">Retour EUR (vérif.)</label><div class="conv-result" id="conv-retour" style="font-size:14px;color:var(--text2)">100.00 €</div></div>
     </div>
   </div>
 </div>
@@ -300,11 +431,11 @@ tbody tr:hover td{background:var(--bg2)}
 <div id="panel-facture" class="panel">
   <div class="card">
     <div class="card-title">
-      <h2>&#128196; <span data-t="fact_entete">En-tête de facture</span> <span id="fact-form-title" style="font-size:13px;font-weight:400;color:var(--accent2);margin-left:6px"></span></h2>
-      <button class="btn sm gold" onclick="imprimerFacture()" data-t="btn_print">&#128424; Imprimer / PDF</button>
+      <h2>📄 <span data-t="fact_entete">En-tête de facture</span> <span id="fact-form-title" style="font-size:13px;font-weight:400;color:var(--accent2);margin-left:6px"></span></h2>
+      <button class="btn sm gold" onclick="imprimerFacture()" data-t="btn_print">🖨 Imprimer / PDF</button>
     </div>
     <div class="form-grid fg-4">
-      <div class="field"><label data-t="fact_num_lbl">N° de facture</label><input id="f-num" readonly style="background:var(--bg2);color:var(--text2);font-weight:600" value="FAC-001"></div>
+      <div class="field"><label data-t="fact_num_lbl">N° de facture *</label><input id="f-num" readonly="" style="background:var(--bg2);color:var(--text2);font-weight:600" value="FAC-001"></div>
       <div class="field"><label data-t="fact_date_lbl">Date d'émission</label><input id="f-date" type="date"></div>
       <div class="field"><label data-t="fact_periode_lbl">Période couverte</label><input id="f-periode"></div>
       <div class="field"><label data-t="fact_mode_lbl">Mode de règlement</label>
@@ -317,72 +448,141 @@ tbody tr:hover td{background:var(--bg2)}
       </div>
     </div>
     <div class="form-grid fg-3" style="margin-top:9px">
-      <div class="field span2"><label data-t="fact_client_lbl">Client <span class="req">*</span></label>
-        <select id="f-client" onchange="remplirClient()"><option value="" data-t="client_select_ph">— Sélectionner un client —</option></select>
+      <div class="field span2"><label data-t="fact_client_lbl">Client *</label>
+        <select id="f-client" onchange="remplirClient()"><option value="">— Sélectionner un client —</option><option value="CLI001">CLI001 – Szalai Bagó Tünde</option><option value="CLI002">CLI002 – Miko - Kövesdi Andrea</option><option value="CLI003">CLI003 – DOVER Dover Nyelvi Centrum</option><option value="DOVER">DOVER – toto titi</option></select>
       </div>
       <div class="field"><label data-t="fact_tva_client_lbl">SIREN / N° TVA client (si pro)</label><input id="f-tva-client"></div>
     </div>
     <div id="client-info" class="client-info" style="margin-top:9px"></div>
   </div>
   <div class="card">
-    <div class="card-title"><h2>&#128176; <span data-t="dev_devise_conv">Devise &amp; conversion</span></h2></div>
+    <div class="card-title"><h2>💰 <span data-t="dev_devise_conv">Devise &amp; conversion</span></h2></div>
     <div class="form-grid fg-3">
-      <div class="field"><label data-t="dev_facturee">Devise de facturation</label><select id="f-devise" onchange="onChangeDeviseFacture()"></select></div>
-      <div class="field"><label data-t="dev_taux_lbl">Taux appliqué (1 EUR =)</label><input id="f-taux" type="number" step="0.0001" value="1" oninput="majTotaux()"></div>
-      <div class="field"><label data-t="dev_symbole">Symbole affiché</label><input id="f-sym" readonly value="€"></div>
+      <div class="field"><label data-t="dev_facturee">Devise facturée</label><select id="f-devise" onchange="onChangeDeviseFacture()"><option value="EUR">EUR – Euro (€)</option><option value="HUF">HUF – Forint hongrois (Ft)</option><option value="USD">USD – Dollar américain ($)</option><option value="GBP">GBP – Livre sterling (£)</option><option value="CHF">CHF – Franc suisse (CHF)</option><option value="PLN">PLN – Złoty polonais (zł)</option></select></div>
+      <div class="field"><label data-t="dev_taux_lbl">Taux (1 EUR = X devise)</label><input id="f-taux" type="number" step="0.0001" value="1" oninput="majTotaux()"></div>
+      <div class="field"><label data-t="dev_symbole">Symbole</label><input id="f-sym" readonly="" value="€"></div>
     </div>
   </div>
   <div class="card">
-    <div class="card-title"><h2>&#128203; <span data-t="fact_lignes">Lignes de prestations</span></h2></div>
+    <div class="card-title"><h2>📋 <span data-t="fact_lignes">Lignes de prestations</span></h2></div>
     <div class="ligne-hdr" style="margin-bottom:4px">
       <label data-t="col_desc">Description</label>
       <label data-t="col_date">Date</label>
       <label data-t="col_qty">Qtité (h)</label>
-      <label data-t="col_pu">PU (<span id="pu-sym">€</span>)</label>
+      <label data-t="col_pu">PU</label>
       <label data-t="col_montant">Montant</label>
       <span></span>
     </div>
-    <div id="lignes-wrap" style="display:flex;flex-direction:column;gap:5px"></div>
-    <button class="btn sm" style="margin-top:9px" onclick="ajouterLigne()" data-t="btn_add_ligne">&#10133; Ajouter une ligne</button>
+    <div id="lignes-wrap" style="display:flex;flex-direction:column;gap:5px"><div style="text-align:center;color:var(--text3);padding:14px;font-style:italic;font-size:13px">Aucune ligne. Cliquez sur « + Ajouter une ligne ».</div></div>
+    <button class="btn sm" style="margin-top:9px" onclick="ajouterLigne()" data-t="btn_add_ligne">+ Ajouter une ligne</button>
   </div>
   <div class="totaux">
-    <div class="line"><span data-t="sous_total">Sous-total HT</span><strong id="f-sous-total">0,00 €</strong></div>
+    <div class="line"><span data-t="sous_total">Sous-total HT</span><strong id="f-sous-total">0,00 Ft</strong></div>
     <div class="tva-note" data-t="tva_note">TVA non applicable, art. 293 B du CGI</div>
-    <div class="eq" id="eq-eur-wrap"><span data-t="eq_eur">Équivalent EUR indicatif</span><strong id="f-eq-eur">—</strong></div>
-    <div class="grand"><span data-t="total_ttc">TOTAL TTC</span><span id="f-total">0,00 €</span></div>
+    <div class="eq" id="eq-eur-wrap" style="display: flex;"><span data-t="eq_eur">Équivalent EUR indicatif</span><strong id="f-eq-eur">0,00 €</strong></div>
+    <div class="grand"><span data-t="total_ttc">TOTAL TTC</span><span id="f-total">0,00 Ft</span></div>
   </div>
   <div class="btn-row">
-    <button id="btn-enregistrer-fact" class="btn primary" onclick="enregistrerFacture()" data-t="btn_save_fact">&#10003; Enregistrer la facture</button>
-    <button class="btn" onclick="nouvelleFacture()" data-t="btn_new_fact">&#10010; Nouvelle facture</button>
+    <button id="btn-enregistrer-fact" class="btn primary" onclick="enregistrerFacture()" data-t="btn_save_fact">✓ Enregistrer la facture</button>
+    <button class="btn" onclick="nouvelleFacture()" data-t="btn_new_fact">✚ Nouvelle facture</button>
     <span id="toast-facture" class="toast"></span>
   </div>
 </div>
 
 <!-- SUIVI -->
 <div id="panel-suivi" class="panel">
-  <div class="stats" id="stats-bloc"></div>
+  <div class="stats" id="stats-bloc">
+    <div class="stat"><div class="lbl">Factures</div><div class="val">4</div></div>
+    <div class="stat"><div class="lbl">Total facturé</div><div class="val">50 490 €</div></div>
+    <div class="stat"><div class="lbl">Encaissé</div><div class="val" style="color:var(--green)">385 €</div></div>
+    <div class="stat"><div class="lbl">En attente</div><div class="val" style="color:var(--orange)">50 105 €</div></div>
+    <div class="stat"><div class="lbl">En retard</div><div class="val" style="color:var(--red)">0 €</div></div></div>
   <div class="card">
     <div class="card-title">
-      <h2>&#128203; <span data-t="suivi_title">Toutes les factures</span></h2>
+      <h2>📋 <span data-t="suivi_title">Toutes les factures</span></h2>
       <div style="display:flex;gap:8px">
         <select id="filtre-statut" onchange="renderSuivi()" style="font-size:12px;padding:4px 8px">
           <option value="" data-t="statut_tous">Tous statuts</option>
-          <option data-t="statut_attente">En attente</option>
-          <option data-t="statut_envoyee">Envoyée</option>
-          <option data-t="statut_payee">Payée</option>
-          <option data-t="statut_retard">En retard</option>
+          <option data-t="statut_attente" value="En attente">En attente</option>
+          <option data-t="statut_envoyee" value="Envoyée">Envoyée</option>
+          <option data-t="statut_payee" value="Payée">Payée</option>
+          <option data-t="statut_retard" value="En retard">En retard</option>
         </select>
-        <input type="text" id="search-facture" oninput="renderSuivi()" style="width:140px;font-size:12px;padding:4px 8px" data-t-ph="search_ph">
+        <input type="text" id="search-facture" oninput="renderSuivi()" style="width:140px;font-size:12px;padding:4px 8px" data-t-ph="search_ph" placeholder="Rechercher…">
       </div>
     </div>
     <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th data-t="fact_num_lbl">N°</th><th data-t="col_date">Date</th><th data-t="th_nom">Client</th>
+          <th data-t="fact_num_lbl">N° de facture *</th><th data-t="col_date">Date</th><th data-t="th_nom">Nom</th>
           <th data-t="col_montant">Montant</th><th data-t="th_devise">Devise</th><th>EUR eq.</th>
           <th data-t="th_statut">Statut</th><th data-t="th_echeance">Échéance</th><th data-t="th_actions">Actions</th>
         </tr></thead>
-        <tbody id="tbody-suivi"></tbody>
+        <tbody id="tbody-suivi"><tr>
+      <td><strong>FAC-2024-001</strong></td>
+      <td style="font-size:11px">02/04/2026</td>
+      <td>Szalai Bagó</td>
+      <td style="font-weight:600">40,00 €</td>
+      <td><span class="badge eur">EUR</span></td>
+      <td style="font-size:11px;color:var(--text2)">—</td>
+      <td><select onchange="majStatut(0,this.value)" style="font-size:11px;padding:3px 6px;border:1px solid var(--border2);border-radius:6px;background:var(--bg)">
+        <option selected="">En attente</option><option>Envoyée</option><option>Payée</option><option>En retard</option>
+      </select></td>
+      <td style="font-size:11px;color:var(--text2)">02/05/2026</td>
+      <td style="white-space:nowrap;display:flex;gap:3px">
+        <button class="btn xs" style="color:var(--accent2);border-color:var(--accent2)" onclick="modifierFacture(0)">✎ Modifier</button>
+        <button class="btn xs" onclick="voirFacture(0)">Voir</button>
+        <button class="btn xs danger" onclick="supprimerFacture(0)">Suppr.</button>
+      </td>
+    </tr><tr>
+      <td><strong>FAC-2024-002</strong></td>
+      <td style="font-size:11px">02/04/2026</td>
+      <td>Szalai Bagó</td>
+      <td style="font-weight:600">65,00 €</td>
+      <td><span class="badge eur">EUR</span></td>
+      <td style="font-size:11px;color:var(--text2)">—</td>
+      <td><select onchange="majStatut(1,this.value)" style="font-size:11px;padding:3px 6px;border:1px solid var(--border2);border-radius:6px;background:var(--bg)">
+        <option selected="">En attente</option><option>Envoyée</option><option>Payée</option><option>En retard</option>
+      </select></td>
+      <td style="font-size:11px;color:var(--text2)">02/05/2026</td>
+      <td style="white-space:nowrap;display:flex;gap:3px">
+        <button class="btn xs" style="color:var(--accent2);border-color:var(--accent2)" onclick="modifierFacture(1)">✎ Modifier</button>
+        <button class="btn xs" onclick="voirFacture(1)">Voir</button>
+        <button class="btn xs danger" onclick="supprimerFacture(1)">Suppr.</button>
+      </td>
+    </tr><tr>
+      <td><strong>FAC-2024-010</strong></td>
+      <td style="font-size:11px">09/04/2026</td>
+      <td>DOVER</td>
+      <td style="font-weight:600">154 000,00 Ft</td>
+      <td><span class="badge huf">HUF</span></td>
+      <td style="font-size:11px;color:var(--text2)">385,00 €</td>
+      <td><select onchange="majStatut(2,this.value)" style="font-size:11px;padding:3px 6px;border:1px solid var(--border2);border-radius:6px;background:var(--bg)">
+        <option>En attente</option><option>Envoyée</option><option selected="">Payée</option><option>En retard</option>
+      </select></td>
+      <td style="font-size:11px;color:var(--text2)">09/05/2026</td>
+      <td style="white-space:nowrap;display:flex;gap:3px">
+        
+        <button class="btn xs" onclick="voirFacture(2)">Voir</button>
+        <button class="btn xs danger" onclick="supprimerFacture(2)">Suppr.</button>
+      </td>
+    </tr><tr>
+      <td><strong>FAC-2024-011</strong></td>
+      <td style="font-size:11px">06/04/2026</td>
+      <td>toto</td>
+      <td style="font-weight:600">50 000,00 €</td>
+      <td><span class="badge eur">EUR</span></td>
+      <td style="font-size:11px;color:var(--text2)">—</td>
+      <td><select onchange="majStatut(3,this.value)" style="font-size:11px;padding:3px 6px;border:1px solid var(--border2);border-radius:6px;background:var(--bg)">
+        <option>En attente</option><option selected="">Envoyée</option><option>Payée</option><option>En retard</option>
+      </select></td>
+      <td style="font-size:11px;color:var(--text2)">06/05/2026</td>
+      <td style="white-space:nowrap;display:flex;gap:3px">
+        
+        <button class="btn xs" onclick="voirFacture(3)">Voir</button>
+        <button class="btn xs danger" onclick="supprimerFacture(3)">Suppr.</button>
+      </td>
+    </tr></tbody>
       </table>
     </div>
   </div>
@@ -391,16 +591,22 @@ tbody tr:hover td{background:var(--bg2)}
 <!-- GUIDE -->
 <div id="panel-guide" class="panel">
   <div class="card" id="guide-card-1">
-    <h2 style="margin-bottom:12px">&#9878; <span data-t="guide_title1">Mentions obligatoires – Toutes factures</span></h2>
-    <div id="guide-table-1"></div>
+    <h2 style="margin-bottom:12px">⚖ <span data-t="guide_title1">Mentions obligatoires – Toutes factures</span></h2>
+    <div id="guide-table-1"><table style="width:100%;font-size:13px;border-collapse:collapse">
+    <tbody><tr style="background:var(--bg2)"><th style="padding:8px;text-align:left;border:1px solid var(--border)">Mention</th><th style="padding:8px;text-align:left;border:1px solid var(--border)">Détail</th></tr>
+    <tr style="background:var(--bg2)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">Nom &amp; prénom + EI</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">Ex : Dupont Marie EI — « EI » obligatoire depuis 2022</td></tr><tr style="background:var(--bg)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">SIRET (14 chiffres)</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">Visible sur votre avis SIRENE ou autoentrepreneur.urssaf.fr</td></tr><tr style="background:var(--bg2)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">Code APE / NAF</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">8559Z pour les cours particuliers de langues</td></tr><tr style="background:var(--bg)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">Numéro de facture</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">Séquence chronologique sans trou — FAC-2024-001, FAC-2024-002…</td></tr><tr style="background:var(--bg2)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">Date d'émission</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">Date de création de la facture</td></tr><tr style="background:var(--bg)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">Date / période de la prestation</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">Ex : 04/01/2024 ou « Janvier 2024 »</td></tr><tr style="background:var(--bg2)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">Description précise</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">Ex : Cours d'allemand individuel – Niveau B1 – 2h</td></tr><tr style="background:var(--bg)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">Catégorie de l'opération (depuis juil. 2024)</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">« Prestation de service »</td></tr><tr style="background:var(--bg2)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">Quantité × Prix unitaire HT</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">Heures × tarif horaire</td></tr><tr style="background:var(--bg)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">Nom &amp; adresse du client</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">Particulier ou raison sociale + adresse</td></tr><tr style="background:var(--bg2)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">Mention TVA</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">« TVA non applicable, art. 293 B du CGI » — OBLIGATOIRE</td></tr><tr style="background:var(--bg)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">Conditions de paiement</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">Date limite, mode, escompte (même si 0%)</td></tr>
+  </tbody></table></div>
   </div>
   <div class="card" id="guide-card-2">
-    <h2 style="margin-bottom:12px">&#127466;&#127482; <span data-t="guide_title2">Mentions supplémentaires – Client professionnel UE</span></h2>
-    <div id="guide-table-2"></div>
+    <h2 style="margin-bottom:12px">🇪🇺 <span data-t="guide_title2">Mentions supplémentaires – Client professionnel UE</span></h2>
+    <div id="guide-table-2"><table style="width:100%;font-size:13px;border-collapse:collapse">
+    <tbody><tr style="background:var(--bg2)"><th style="padding:8px;text-align:left;border:1px solid var(--border)">Mention</th><th style="padding:8px;text-align:left;border:1px solid var(--border)">Détail</th></tr>
+    <tr style="background:var(--bg2)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">Votre N° TVA intracommunautaire</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">FR XX XXXXXXXXX — à demander gratuitement à votre SIE</td></tr><tr style="background:var(--bg)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">N° TVA intracom du client</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">À VÉRIFIER sur ec.europa.eu/taxation_customs/vies/</td></tr><tr style="background:var(--bg2)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">Double mention TVA</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">① Art. 293 B CGI  ② Autoliquidation par le preneur, art. 283-2 CGI</td></tr><tr style="background:var(--bg)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">DES (Déclaration Européenne de Services)</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">Obligatoire avant le 10 du mois suivant — douane.gouv.fr</td></tr><tr style="background:var(--bg2)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">Indemnité forfaitaire 40 €</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">Due de plein droit en cas de retard — art. L441-10 Code de commerce</td></tr><tr style="background:var(--bg)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">Pénalités de retard</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">Taux légal × 3 minimum, exigibles dès le lendemain de l'échéance</td></tr><tr style="background:var(--bg2)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">SIREN client (pro France uniquement)</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">Obligatoire depuis le 1er juillet 2024</td></tr>
+  </tbody></table></div>
   </div>
   <div class="card" style="background:var(--orange-light);border-color:#ffcc80" id="guide-card-3">
-    <h2 style="margin-bottom:10px;color:var(--orange)">&#9888; <span data-t="guide_title3">Checklist avant envoi</span></h2>
-    <div id="guide-checklist" style="columns:2;gap:20px;font-size:13px;line-height:2;color:var(--text2)"></div>
+    <h2 style="margin-bottom:10px;color:var(--orange)">⚠ <span data-t="guide_title3">Checklist avant envoi</span></h2>
+    <div id="guide-checklist" style="columns:2;gap:20px;font-size:13px;line-height:2;color:var(--text2)"><div>☐ N° de facture séquentiel sans trou</div><div>☐ SIRET à 14 chiffres</div><div>☐ Mention TVA art. 293 B présente</div><div>☐ Client pro France → SIREN noté</div><div>☐ Client pro UE → N° TVA vérifié sur VIES</div><div>☐ Client pro UE → double mention autoliquidation</div><div>☐ Client pro UE → DES à déposer avant le 10</div><div>☐ Indemnité 40 € mentionnée (pro)</div><div>☐ Pénalités de retard mentionnées (pro)</div><div>☐ Catégorie « Prestation de service » indiquée</div><div>☐ Facture conservée 10 ans</div></div>
   </div>
 </div>
 
@@ -421,6 +627,15 @@ fr: {
   params_info:"Vos informations", params_legal:"Mentions légales & conditions", params_tarifs:"Tarifs par défaut",
   p_nom_lbl:"Nom & prénom (+ EI) *", p_siret_lbl:"SIRET *", p_adr1_lbl:"Adresse ligne 1",
   p_adr2_lbl:"Adresse ligne 2", p_ville_lbl:"Code postal & Ville", p_tel_lbl:"Téléphone",
+  params_banques:"Comptes bancaires",
+  banque_active_lbl:"Compte actif :",
+  banque_add_title:"Ajouter un compte",
+  banque_nom_lbl:"Nom de la banque *",
+  banque_btn_add:"+ Ajouter ce compte",
+  banque_edit:"✎",
+  banque_delete_confirm:"Supprimer ce compte bancaire ?",
+  banque_err_required:"Nom et IBAN obligatoires",
+  banque_aucun:"— Aucun compte —",
   p_tva_intra_lbl:"N° TVA intracommunautaire", p_delai_lbl:"Délai de paiement (jours)",
   p_penalites_lbl:"Pénalités de retard", p_tva_fr_lbl:"Mention TVA – Client France / UE particulier",
   p_tva_ue_lbl:"Mention TVA – Client professionnel UE", p_escompte_lbl:"Escompte",
@@ -535,6 +750,15 @@ hu: {
   params_info:"Az Ön adatai", params_legal:"Jogi megjegyzések & feltételek", params_tarifs:"Alapárak",
   p_nom_lbl:"Név (+ EI) *", p_siret_lbl:"SIRET *", p_adr1_lbl:"Cím 1. sor",
   p_adr2_lbl:"Cím 2. sor", p_ville_lbl:"Irányítószám & Város", p_tel_lbl:"Telefon",
+  params_banques:"Bankszámlák",
+  banque_active_lbl:"Aktív számla:",
+  banque_add_title:"Számla hozzáadása",
+  banque_nom_lbl:"Bank neve *",
+  banque_btn_add:"+ Számla hozzáadása",
+  banque_edit:"✎",
+  banque_delete_confirm:"Törli ezt a bankszámlát?",
+  banque_err_required:"A bank neve és az IBAN kötelező",
+  banque_aucun:"— Nincs számla —",
   p_tva_intra_lbl:"Közösségi adószám", p_delai_lbl:"Fizetési határidő (nap)",
   p_penalites_lbl:"Késedelmi kamat", p_tva_fr_lbl:"ÁFA-megjegyzés – Magánügyfél",
   p_tva_ue_lbl:"ÁFA-megjegyzés – EU szakmai ügyfél", p_escompte_lbl:"Készpénzfizetési engedmény",
@@ -718,7 +942,8 @@ function renderGuide() {
 // STATE
 // ══════════════════════════════════════════════════════════════
 let state = {
-  parametres:{nom:'',siret:'',adr1:'',adr2:'',ville:'',tel:'',email:'',ape:'8559Z',iban:'',tvaIntra:'',
+  banques:[],                   // [{id, nom, iban, swift, devise}]
+  parametres:{nom:'',siret:'',adr1:'',adr2:'',ville:'',tel:'',email:'',ape:'8559Z',banqueActiveId:'',tvaIntra:'',
     delai:30,penalites:'Taux légal en vigueur × 3',
     mentionTvaFr:'TVA non applicable, art. 293 B du CGI',
     mentionTvaUE:'TVA non applicable, art. 293 B du CGI – Autoliquidation par le preneur (art. 283-2 CGI)',
@@ -744,8 +969,8 @@ let state = {
 // ── Supabase credentials ─────────────────────────────────────────────────
 // Fill these two lines with your Supabase project URL and anon key.
 // Once filled, the app connects automatically on every device — no setup needed.
-const SB_URL_DEFAULT = 'https://hpdvsipzgruxiumccgls.supabase.co';   // ← paste your Project URL here  e.g. https://xxxx.supabase.co
-const SB_KEY_DEFAULT = 'sb_publishable_MBSZFlAsr1VfdXhDijsMww_wYR5fqrj';   // ← paste your anon/public key here
+const SB_URL_DEFAULT = '';   // ← paste your Project URL here  e.g. https://xxxx.supabase.co
+const SB_KEY_DEFAULT = '';   // ← paste your anon/public key here
 
 // Runtime state
 let sbUrl  = '';
@@ -1068,9 +1293,15 @@ async function sbLoadFromCloud() {
 
     // Apply cloud data to state
     if (paramRows.length > 0 && paramRows[0].data) {
-      // Replace entire parametres object (not just assign over defaults)
-      state.parametres = Object.assign({}, state.parametres, paramRows[0].data);
-      console.log('[Supabase] Parametres loaded — nom:', state.parametres.nom);
+      const pdata = paramRows[0].data;
+      // Extraire les banques si elles sont stockées dans le payload
+      if(Array.isArray(pdata._banques)){
+        state.banques = pdata._banques;
+      }
+      // Nettoyer _banques avant d'assigner aux parametres
+      const { _banques, ...pClean } = pdata;
+      state.parametres = Object.assign({}, state.parametres, pClean);
+      console.log('[Supabase] Parametres loaded — nom:', state.parametres.nom, '| banques:', state.banques.length);
     } else {
       console.warn('[Supabase] No parametres row found in cloud');
     }
@@ -1115,8 +1346,9 @@ async function sbSaveToCloud(force) {
     console.log(`[Supabase] Saving — params.nom:${state.parametres.nom}, ${state.clients.length} clients, ${state.factures.length} factures`);
 
     // 1. Parametres (single row — always exists after first save)
+    // Inclure les banques dans le payload parametres pour éviter une table séparée
     await sbUpsertOne('sb_parametres', 'slug', 'main',
-      { slug: 'main', data: state.parametres });
+      { slug: 'main', data: { ...state.parametres, _banques: state.banques } });
 
     // 2. Clients (one upsert per client, sequentially)
     await sbUpsertBatch('sb_clients', 'ref',
@@ -1239,12 +1471,13 @@ function toast(id, msg, ok=true) {
 function loadParametresUI() {
   const p = state.parametres;
   const map={'p-nom':'nom','p-siret':'siret','p-adr1':'adr1','p-adr2':'adr2','p-ville':'ville',
-    'p-tel':'tel','p-email':'email','p-ape':'ape','p-iban':'iban','p-tva-intra':'tvaIntra',
+    'p-tel':'tel','p-email':'email','p-ape':'ape','p-tva-intra':'tvaIntra',
     'p-delai':'delai','p-penalites':'penalites','p-mention-tva-fr':'mentionTvaFr',
     'p-mention-tva-ue':'mentionTvaUE','p-escompte':'escompte','p-pied1':'pied1','p-pied2':'pied2',
     't-indiv':'tarifIndiv','t-duo':'tarifDuo','t-groupe':'tarifGroupe','t-forfait':'tarifForfait','t-exam':'tarifExam'};
   Object.entries(map).forEach(([elId,key])=>{ const el=document.getElementById(elId); if(el&&p[key]!==undefined) el.value=p[key]; });
   document.getElementById('header-sub').textContent = p.nom||'Auto-entrepreneur';
+  renderBanquesUI();
 }
 async function sauvegarderParametres() {
   const p=state.parametres;
@@ -1253,7 +1486,7 @@ async function sauvegarderParametres() {
   p.adr1=document.getElementById('p-adr1').value; p.adr2=document.getElementById('p-adr2').value;
   p.ville=document.getElementById('p-ville').value; p.tel=document.getElementById('p-tel').value;
   p.email=document.getElementById('p-email').value; p.ape=document.getElementById('p-ape').value;
-  p.iban=document.getElementById('p-iban').value; p.tvaIntra=document.getElementById('p-tva-intra').value;
+  p.banqueActiveId=document.getElementById('p-banque-active').value||''; p.tvaIntra=document.getElementById('p-tva-intra').value;
   p.delai=parseInt(document.getElementById('p-delai').value)||30;
   p.penalites=document.getElementById('p-penalites').value;
   p.mentionTvaFr=document.getElementById('p-mention-tva-fr').value;
@@ -1270,6 +1503,106 @@ async function sauvegarderParametres() {
   const ok = await saveAsync();
   if (ok) toast('toast-param', t('toast_params_ok'));
   else toast('toast-param', lang==='fr' ? '⚠ Erreur sauvegarde Supabase' : '⚠ Supabase mentési hiba', false);
+}
+
+// ══════════════════════════════════════════════════════════════
+// BANQUES
+// ══════════════════════════════════════════════════════════════
+function nextBanqueId(){
+  if(!state.banques.length) return 'BNK-001';
+  const nums=state.banques.map(b=>{const m=(b.id||'').match(/(\d+)$/);return m?parseInt(m[1]):0;});
+  return 'BNK-'+(Math.max(...nums)+1).toString().padStart(3,'0');
+}
+
+function renderBanquesUI(){
+  const list=document.getElementById('banques-list');
+  const sel=document.getElementById('p-banque-active');
+  const nbDev=document.getElementById('nb-devise');
+  if(!list||!sel) return;
+
+  // Populate devise select in add form
+  if(nbDev){
+    const cur=nbDev.value;
+    nbDev.innerHTML=state.devises.map(d=>`<option value="${d.code}">${d.code} – ${d.nom}</option>`).join('');
+    if(cur) nbDev.value=cur;
+  }
+
+  // List of banks
+  if(!state.banques.length){
+    list.innerHTML=`<div style="font-size:12px;color:var(--text3);font-style:italic;padding:6px 0">${t('banque_aucun')}</div>`;
+  } else {
+    list.innerHTML=state.banques.map(b=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);${state.parametres.banqueActiveId===b.id?'border-color:var(--accent2);background:var(--eur-light)':''}">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600;color:var(--text)${state.parametres.banqueActiveId===b.id?';color:var(--accent2)':''}">${b.nom}${state.parametres.banqueActiveId===b.id?' <span style="font-size:10px;background:var(--accent2);color:#fff;padding:1px 6px;border-radius:10px;font-weight:500">actif</span>':''}</div>
+          <div style="font-size:11px;color:var(--text2);font-family:monospace;margin-top:2px">${b.iban||'—'}</div>
+          <div style="font-size:11px;color:var(--text3)">
+            ${b.swift?'BIC: '+b.swift:''}
+            ${b.swift&&b.devise?' · ':''}
+            ${b.devise?b.devise:''}
+            ${b.pays?' · '+b.pays:''}
+          </div>
+        </div>
+        <div style="display:flex;gap:4px;flex-shrink:0">
+          <button class="btn xs" style="color:var(--accent2);border-color:var(--accent2)" onclick="setActiveBanque('${b.id}')" title="${lang==='fr'?'Définir comme actif':'Beállítás aktívként'}">★</button>
+          <button class="btn xs danger" onclick="supprimerBanque('${b.id}')" title="${t('banque_delete_confirm')}">✕</button>
+        </div>
+      </div>`).join('');
+  }
+
+  // Update active select
+  const activeOpts=state.banques.map(b=>`<option value="${b.id}"${state.parametres.banqueActiveId===b.id?' selected':''}>${b.nom} — ${b.iban||'—'}</option>`).join('');
+  sel.innerHTML=`<option value="">${t('banque_aucun')}</option>${activeOpts}`;
+  if(state.parametres.banqueActiveId) sel.value=state.parametres.banqueActiveId;
+}
+
+async function ajouterBanque(){
+  const nom=document.getElementById('nb-nom').value.trim();
+  const iban=document.getElementById('nb-iban').value.trim();
+  if(!nom||!iban){toast('toast-banque',t('banque_err_required'),false);return;}
+  const b={
+    id:nextBanqueId(),
+    nom,
+    iban,
+    swift:document.getElementById('nb-swift').value.trim(),
+    devise:document.getElementById('nb-devise').value||'EUR',
+    pays:document.getElementById('nb-pays').value.trim()
+  };
+  state.banques.push(b);
+  // Si c'est la première banque, la définir comme active
+  if(state.banques.length===1) state.parametres.banqueActiveId=b.id;
+  const ok=await saveAsync();
+  if(!ok){state.banques.pop();toast('toast-banque',lang==='fr'?'⚠ Erreur Supabase':'⚠ Supabase hiba',false);return;}
+  ['nb-nom','nb-iban','nb-swift','nb-pays'].forEach(id=>document.getElementById(id).value='');
+  renderBanquesUI();
+  toast('toast-banque',nom+(lang==='fr'?' ajouté ✓':' hozzáadva ✓'));
+}
+
+async function supprimerBanque(id){
+  if(!confirm(t('banque_delete_confirm'))) return;
+  const backup=[...state.banques];
+  const wasActive=state.parametres.banqueActiveId===id;
+  state.banques=state.banques.filter(b=>b.id!==id);
+  if(wasActive) state.parametres.banqueActiveId=state.banques[0]?.id||'';
+  const ok=await saveAsync();
+  if(!ok){state.banques=backup;toast('toast-banque',lang==='fr'?'⚠ Erreur suppression':'⚠ Törlési hiba',false);return;}
+  renderBanquesUI();
+}
+
+async function setActiveBanque(id){
+  state.parametres.banqueActiveId=id;
+  const ok=await saveAsync();
+  if(ok) renderBanquesUI();
+}
+
+function changerBanqueActive(){
+  state.parametres.banqueActiveId=document.getElementById('p-banque-active').value||'';
+  renderBanquesUI();
+}
+
+function getBanqueActive(){
+  if(state.banques.length===0) return null;
+  return state.banques.find(b=>b.id===state.parametres.banqueActiveId)||state.banques[0];
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1661,6 +1994,7 @@ function imprimerFacture(){
   const p = state.parametres;
   const client = state.clients.find(c=>c.ref===clientRef)||{};
   const d = getDevise(devise);
+  const bq = getBanqueActive(); // banque active pour le règlement
   const isUEpro = (client.type||'').includes('UE')||(client.type||'').includes('Szakmai');
   const isPro   = isUEpro || (client.type||'').includes('France')||(client.type||'').includes('Franciaország');
 
@@ -1958,7 +2292,10 @@ function imprimerFacture(){
   <div class="payment-block">
     <div class="payment-head">${L?'&#128176; Informations de règlement':'&#128176; Fizetési információk'}</div>
     <div class="payment-body">
-      ${p.iban?`<div class="pay-item iban-item"><div class="pay-lbl">IBAN</div><div class="pay-val">${p.iban}</div></div>`:''}
+      ${bq?`<div class="pay-item"><div class="pay-lbl">${L?'Banque':'Bank'}</div><div class="pay-val">${bq.nom}</div></div>`:''}
+      ${bq?.iban?`<div class="pay-item iban-item"><div class="pay-lbl">IBAN</div><div class="pay-val">${bq.iban}</div></div>`:''}
+      ${bq?.swift?`<div class="pay-item"><div class="pay-lbl">SWIFT / BIC</div><div class="pay-val" style="font-family:monospace;letter-spacing:.04em">${bq.swift}</div></div>`:''}
+      ${bq?.pays?`<div class="pay-item"><div class="pay-lbl">${L?'Pays':'Ország'}</div><div class="pay-val">${bq.pays}</div></div>`:''}
       <div class="pay-item"><div class="pay-lbl">${L?'Délai':'Határidő'}</div><div class="pay-val">${p.delai||30} ${L?'jours':'nap'} — ${echeanceFmt}</div></div>
       <div class="pay-item"><div class="pay-lbl">${L?'Mode':'Fizetési mód'}</div><div class="pay-val">${mode||'—'}</div></div>
     </div>
@@ -2113,6 +2450,7 @@ function refreshUI(){
   document.getElementById('devise-active').value=state.deviseActive||'EUR';
   changerDeviseActive();
   renderTableClients();
+  renderBanquesUI();
   document.getElementById('c-ref').value=nextRef();
   document.getElementById('f-date').value=new Date().toISOString().slice(0,10);
   document.getElementById('d-date-maj').value=new Date().toISOString().slice(0,10);
@@ -2145,5 +2483,5 @@ function initAll(){
 
 initAll();
 </script>
-</body>
-</html>
+
+</body></html>
