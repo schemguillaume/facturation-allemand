@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<!-- saved from url=(0094)file:///C:/Users/IGSC6670/OneDrive%20-%20France%20Travail/Downloads/FacturationAllemand_4.html -->
-<html lang="fr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title id="page-title">Facturation – Cours d'allemand</title>
 <style>
@@ -109,35 +109,36 @@ tbody tr:hover td{background:var(--bg2)}
 
 <header>
   <div>
-    <h1 id="h-title">🎓 Cours d'allemand — Facturation</h1>
-    <div class="sub" id="header-sub">Eva EMBER</div>
+    <h1 id="h-title">&#127891; Cours d'allemand — Facturation</h1>
+    <div class="sub" id="header-sub">Auto-entrepreneur</div>
   </div>
   <div class="hdr-right">
     <div class="lang-switch">
-      <button class="lang-btn active" id="btn-lang-fr" onclick="setLang(&#39;fr&#39;)">FR</button>
+      <button class="lang-btn active" id="btn-lang-fr" onclick="setLang('fr')">FR</button>
       <div class="lang-sep"></div>
-      <button class="lang-btn" id="btn-lang-hu" onclick="setLang(&#39;hu&#39;)">HU</button>
+      <button class="lang-btn" id="btn-lang-hu" onclick="setLang('hu')">HU</button>
     </div>
-    <div class="saved-pill" id="save-indicator" style="background: rgba(255, 100, 100, 0.3);">⚠ Ouvrez via serveur (pas file://)</div>
+    <div class="saved-pill" id="save-indicator">&#10003;</div>
     <!-- Supabase sync button -->
     <button class="btn sm" id="btn-supabase" onclick="supabaseConnect()" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3);gap:5px">
-      <svg width="14" height="14" viewBox="0 0 109 113" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><path d="M63.7 110.3c-2.9 3.7-9 1.7-9-3V62h42.4c3.9 0 6 4.6 3.5 7.5L63.7 110.3z" fill="#3ECF8E"></path><path d="M63.7 110.3c-2.9 3.7-9 1.7-9-3V62h42.4c3.9 0 6 4.6 3.5 7.5L63.7 110.3z" fill="url(#a)" fill-opacity=".3"></path><path d="M45.3 2.7c2.9-3.7 9-1.7 9 3V51H11.9c-3.9 0-6-4.6-3.5-7.5L45.3 2.7z" fill="#3ECF8E"></path><defs><lineargradient id="a" x1="55" y1="55" x2="97" y2="108" gradientUnits="userSpaceOnUse"><stop stop-color="#249361"></stop><stop offset="1" stop-color="#3ECF8E" stop-opacity="0"></stop></lineargradient></defs></svg>
-      <span id="supabase-btn-label">Supabase ⚠</span>
+      <svg width="14" height="14" viewBox="0 0 109 113" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><path d="M63.7 110.3c-2.9 3.7-9 1.7-9-3V62h42.4c3.9 0 6 4.6 3.5 7.5L63.7 110.3z" fill="#3ECF8E"/><path d="M63.7 110.3c-2.9 3.7-9 1.7-9-3V62h42.4c3.9 0 6 4.6 3.5 7.5L63.7 110.3z" fill="url(#a)" fill-opacity=".3"/><path d="M45.3 2.7c2.9-3.7 9-1.7 9 3V51H11.9c-3.9 0-6-4.6-3.5-7.5L45.3 2.7z" fill="#3ECF8E"/><defs><linearGradient id="a" x1="55" y1="55" x2="97" y2="108" gradientUnits="userSpaceOnUse"><stop stop-color="#249361"/><stop offset="1" stop-color="#3ECF8E" stop-opacity="0"/></linearGradient></defs></svg>
+      <span id="supabase-btn-label">Supabase</span>
     </button>
-    <button class="btn sm" onclick="exportData()" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3)" data-t="export">↓ Exporter</button>
-    <button class="btn sm" onclick="document.getElementById(&#39;import-file&#39;).click()" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3)" data-t="import">↑ Importer</button>
+    <button class="btn sm" onclick="exportData()" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3)" data-t="export">&#8681; Exporter</button>
+    <button class="btn sm" onclick="document.getElementById('import-file').click()" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3)" data-t="import">&#8679; Importer</button>
     <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
   </div>
 </header>
 
 <div class="main">
 <nav id="main-nav">
-  <button class="active" onclick="showPanel(&#39;parametres&#39;)"><span class="ico">⚙</span><span class="nav-label" data-t="nav_params">Paramètres</span></button>
-  <button onclick="showPanel(&#39;clients&#39;)"><span class="ico">👤</span><span class="nav-label" data-t="nav_clients">Clients</span></button>
-  <button onclick="showPanel(&#39;devises&#39;)"><span class="ico">💲</span><span class="nav-label" data-t="nav_devises">Devises</span></button>
-  <button onclick="showPanel(&#39;facture&#39;)"><span class="ico">📄</span><span class="nav-label" data-t="nav_facture">Facture</span></button>
-  <button onclick="showPanel(&#39;suivi&#39;)"><span class="ico">📊</span><span class="nav-label" data-t="nav_suivi">Suivi</span></button>
-  <button onclick="showPanel(&#39;guide&#39;)"><span class="ico">⚖</span><span class="nav-label" data-t="nav_guide">Guide légal</span></button>
+  <button class="active" onclick="showPanel('parametres')"><span class="ico">&#9881;</span><span class="nav-label" data-t="nav_params">Paramètres</span></button>
+  <button onclick="showPanel('clients')"><span class="ico">&#128100;</span><span class="nav-label" data-t="nav_clients">Clients</span></button>
+  <button onclick="showPanel('devises')"><span class="ico">&#128178;</span><span class="nav-label" data-t="nav_devises">Devises</span></button>
+  <button onclick="showPanel('facture')"><span class="ico">&#128196;</span><span class="nav-label" data-t="nav_facture">Facture</span></button>
+  <button onclick="showPanel('suivi')"><span class="ico">&#128202;</span><span class="nav-label" data-t="nav_suivi">Suivi</span></button>
+  <button onclick="showPanel('stats')"><span class="ico">&#128200;</span><span class="nav-label" data-t="nav_stats">Statistiques</span></button>
+  <button onclick="showPanel('guide')"><span class="ico">&#9878;</span><span class="nav-label" data-t="nav_guide">Guide légal</span></button>
 </nav>
 
 <div class="content">
@@ -145,10 +146,10 @@ tbody tr:hover td{background:var(--bg2)}
 <!-- PARAMÈTRES -->
 <div id="panel-parametres" class="panel active">
   <div class="card">
-    <div class="card-title"><h2>🏠 <span data-t="params_info">Vos informations</span></h2></div>
+    <div class="card-title"><h2>&#127968; <span data-t="params_info">Vos informations</span></h2></div>
     <div class="form-grid fg-3">
-      <div class="field span2"><label data-t="p_nom_lbl">Nom &amp; prénom (+ EI) *</label><input id="p-nom" placeholder="Dupont Marie EI"></div>
-      <div class="field"><label data-t="p_siret_lbl">SIRET *</label><input id="p-siret" placeholder="000 000 000 00000"></div>
+      <div class="field span2"><label data-t="p_nom_lbl">Nom &amp; prénom (+ EI) <span class="req">*</span></label><input id="p-nom" placeholder="Dupont Marie EI"></div>
+      <div class="field"><label data-t="p_siret_lbl">SIRET <span class="req">*</span></label><input id="p-siret" placeholder="000 000 000 00000"></div>
       <div class="field span2"><label data-t="p_adr1_lbl">Adresse ligne 1</label><input id="p-adr1"></div>
       <div class="field"><label data-t="p_adr2_lbl">Adresse ligne 2</label><input id="p-adr2"></div>
       <div class="field"><label data-t="p_ville_lbl">Code postal &amp; Ville</label><input id="p-ville"></div>
@@ -161,22 +162,22 @@ tbody tr:hover td{background:var(--bg2)}
   <!-- ── COMPTES BANCAIRES ───────────────────────────────────────── -->
   <div class="card" id="card-banques">
     <div class="card-title">
-      <h2>🏭 <span data-t="params_banques">Comptes bancaires</span></h2>
+      <h2>&#127981; <span data-t="params_banques">Comptes bancaires</span></h2>
       <div style="display:flex;align-items:center;gap:8px">
         <span style="font-size:11px;color:var(--text2)" data-t="banque_active_lbl">Compte actif :</span>
-        <select id="p-banque-active" onchange="changerBanqueActive()" style="font-size:12px;padding:4px 8px"><option value="">— Aucun compte —</option></select>
+        <select id="p-banque-active" onchange="changerBanqueActive()" style="font-size:12px;padding:4px 8px"></select>
       </div>
     </div>
     <!-- Liste des banques -->
-    <div id="banques-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px"><div style="font-size:12px;color:var(--text3);font-style:italic;padding:6px 0">— Aucun compte —</div></div>
+    <div id="banques-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px"></div>
     <!-- Formulaire ajout -->
     <div style="background:var(--bg2);border:1px dashed var(--border2);border-radius:var(--radius-lg);padding:12px 14px">
       <h3 style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px" data-t="banque_add_title">Ajouter un compte</h3>
       <div class="form-grid fg-4" style="margin-bottom:10px">
-        <div class="field span2"><label data-t="banque_nom_lbl">Nom de la banque *</label><input id="nb-nom" placeholder="Crédit Agricole, OTP Bank…"></div>
+        <div class="field span2"><label data-t="banque_nom_lbl">Nom de la banque <span class="req">*</span></label><input id="nb-nom" placeholder="Crédit Agricole, OTP Bank…"></div>
         <div class="field span2"><label>IBAN <span class="req">*</span></label><input id="nb-iban" placeholder="FR76 XXXX… / HU00 XXXX…"></div>
         <div class="field"><label>SWIFT / BIC</label><input id="nb-swift" placeholder="AGRIFRPP…"></div>
-        <div class="field"><label data-t="dev_facturee">Devise facturée</label><select id="nb-devise"><option value="EUR">EUR – Euro</option><option value="HUF">HUF – Forint hongrois</option><option value="USD">USD – Dollar américain</option><option value="GBP">GBP – Livre sterling</option><option value="CHF">CHF – Franc suisse</option><option value="PLN">PLN – Złoty polonais</option></select></div>
+        <div class="field"><label data-t="dev_facturee">Devise</label><select id="nb-devise"></select></div>
         <div class="field span2"><label data-t="c_pays_lbl">Pays</label><input id="nb-pays" placeholder="France, Hongrie…"></div>
       </div>
       <div class="btn-row">
@@ -187,19 +188,19 @@ tbody tr:hover td{background:var(--bg2)}
   </div>
 
   <div class="card">
-    <div class="card-title"><h2>📋 <span data-t="params_legal">Mentions légales &amp; conditions</span></h2></div>
+    <div class="card-title"><h2>&#128203; <span data-t="params_legal">Mentions légales &amp; conditions</span></h2></div>
     <div class="form-grid fg-3">
       <div class="field"><label data-t="p_delai_lbl">Délai de paiement (jours)</label><input id="p-delai" type="number" value="30"></div>
       <div class="field span2"><label data-t="p_penalites_lbl">Pénalités de retard</label><input id="p-penalites" value="Taux légal en vigueur × 3"></div>
       <div class="field span3"><label data-t="p_tva_fr_lbl">Mention TVA – Client France / UE particulier</label><input id="p-mention-tva-fr" value="TVA non applicable, art. 293 B du CGI"></div>
       <div class="field span3"><label data-t="p_tva_ue_lbl">Mention TVA – Client professionnel UE</label><input id="p-mention-tva-ue" value="TVA non applicable, art. 293 B du CGI – Autoliquidation par le preneur (art. 283-2 CGI)"></div>
       <div class="field span3"><label data-t="p_escompte_lbl">Escompte</label><input id="p-escompte" value="Aucun escompte pour paiement anticipé"></div>
-      <div class="field span3"><label data-t="p_pied1_lbl">Pied de facture ligne 1</label><input id="p-pied1" value="Merci de votre confiance – Cours d&#39;allemand tous niveaux"></div>
+      <div class="field span3"><label data-t="p_pied1_lbl">Pied de facture ligne 1</label><input id="p-pied1" value="Merci de votre confiance – Cours d'allemand tous niveaux"></div>
       <div class="field span3"><label data-t="p_pied2_lbl">Pied de facture ligne 2</label><input id="p-pied2" value="Règlement par virement bancaire uniquement"></div>
     </div>
   </div>
   <div class="card">
-    <div class="card-title"><h2>💰 <span data-t="params_tarifs">Tarifs par défaut</span></h2></div>
+    <div class="card-title"><h2>&#128176; <span data-t="params_tarifs">Tarifs par défaut</span></h2></div>
     <div class="form-grid fg-4">
       <div class="field"><label data-t="t_indiv_lbl">Cours individuel (€/h)</label><input id="t-indiv" type="number" value="45"></div>
       <div class="field"><label data-t="t_duo_lbl">Cours duo (€/h)</label><input id="t-duo" type="number" value="30"></div>
@@ -209,7 +210,7 @@ tbody tr:hover td{background:var(--bg2)}
     </div>
   </div>
   <div class="btn-row">
-    <button class="btn primary" onclick="sauvegarderParametres()" data-t="btn_save_params">✓ Enregistrer les paramètres</button>
+    <button class="btn primary" onclick="sauvegarderParametres()" data-t="btn_save_params">&#10003; Enregistrer les paramètres</button>
     <span id="toast-param" class="toast"></span>
   </div>
 </div>
@@ -217,12 +218,12 @@ tbody tr:hover td{background:var(--bg2)}
 <!-- CLIENTS -->
 <div id="panel-clients" class="panel">
   <div class="card">
-    <div class="card-title"><h2 id="form-client-title">➕ <span data-t="client_new">Nouveau client</span></h2></div>
+    <div class="card-title"><h2 id="form-client-title">&#10133; <span data-t="client_new">Nouveau client</span></h2></div>
     <div class="form-grid fg-4">
-      <div class="field"><label data-t="c_ref_lbl">Référence *</label><input id="c-ref" readonly="" style="background:var(--bg2);color:var(--text2);font-weight:600"><span id="c-ref-note" style="font-size:11px;color:var(--text3);margin-top:3px">🔒 Générée automatiquement</span></div>
-      <div class="field span2"><label data-t="c_nom_lbl">Nom / Raison sociale *</label><input id="c-nom"></div>
+      <div class="field"><label data-t="c_ref_lbl">Référence <span class="req">*</span></label><input id="c-ref" readonly style="background:var(--bg2);color:var(--text2);font-weight:600"><span id="c-ref-note" style="font-size:11px;color:var(--text3);margin-top:3px">&#128274; Générée automatiquement</span></div>
+      <div class="field span2"><label data-t="c_nom_lbl">Nom / Raison sociale <span class="req">*</span></label><input id="c-nom"></div>
       <div class="field"><label data-t="c_prenom_lbl">Prénom</label><input id="c-prenom"></div>
-      <div class="field span2"><label data-t="c_email_lbl">Email *</label><input id="c-email" type="email"></div>
+      <div class="field span2"><label data-t="c_email_lbl">Email <span class="req">*</span></label><input id="c-email" type="email"></div>
       <div class="field"><label data-t="c_tel_lbl">Téléphone</label><input id="c-tel"></div>
       <div class="field"><label data-t="c_type_lbl">Type</label>
         <select id="c-type">
@@ -236,7 +237,7 @@ tbody tr:hover td{background:var(--bg2)}
       <div class="field"><label data-t="c_ville_lbl">Ville</label><input id="c-ville"></div>
       <div class="field"><label data-t="c_pays_lbl">Pays</label><input id="c-pays"></div>
       <div class="field"><label data-t="c_tva_lbl">SIREN / N° TVA intracom</label><input id="c-tva"></div>
-      <div class="field"><label data-t="c_devise_lbl">Devise préférée</label><select id="c-devise"><option value="EUR">EUR – Euro (€)</option><option value="HUF">HUF – Forint hongrois (Ft)</option><option value="USD">USD – Dollar américain ($)</option><option value="GBP">GBP – Livre sterling (£)</option><option value="CHF">CHF – Franc suisse (CHF)</option><option value="PLN">PLN – Złoty polonais (zł)</option></select></div>
+      <div class="field"><label data-t="c_devise_lbl">Devise préférée</label><select id="c-devise"></select></div>
       <div class="field"><label data-t="c_tarif_lbl">Tarif horaire (€/h)</label><input id="c-tarif" type="number"></div>
       <div class="field"><label data-t="c_niveau_lbl">Niveau</label>
         <select id="c-niveau"><option>A1</option><option>A2</option><option>B1</option><option>B2</option><option>C1</option><option>C2</option></select>
@@ -245,15 +246,15 @@ tbody tr:hover td{background:var(--bg2)}
     </div>
     <div class="btn-row" style="margin-top:10px">
       <button id="btn-ajouter-client" class="btn primary" onclick="ajouterClient()" data-t="btn_add_client">+ Ajouter ce client</button>
-      <button id="btn-annuler-edit" class="btn" onclick="viderFormClient()" style="display:none" data-t="btn_cancel_edit">✕ Annuler la modification</button>
+      <button id="btn-annuler-edit" class="btn" onclick="viderFormClient()" style="display:none" data-t="btn_cancel_edit">&#10005; Annuler la modification</button>
       <button class="btn" onclick="viderFormClient()" data-t="btn_clear">Effacer</button>
       <span id="toast-client" class="toast"></span>
     </div>
   </div>
   <div class="card">
     <div class="card-title">
-      <h2>👥 <span data-t="client_base">Base clients</span> (<span id="nb-clients">4</span>)</h2>
-      <input type="text" id="search-client" oninput="renderTableClients()" style="width:170px;padding:5px 9px;font-size:12px" data-t-ph="search_ph" placeholder="Rechercher…">
+      <h2>&#128101; <span data-t="client_base">Base clients</span> (<span id="nb-clients">0</span>)</h2>
+      <input type="text" id="search-client" oninput="renderTableClients()" style="width:170px;padding:5px 9px;font-size:12px" data-t-ph="search_ph">
     </div>
     <div class="tbl-wrap">
       <table>
@@ -263,63 +264,7 @@ tbody tr:hover td{background:var(--bg2)}
           <th data-t="th_tva">N° TVA</th><th data-t="th_devise">Devise</th>
           <th data-t="th_tarif">Tarif</th><th data-t="th_actions">Actions</th>
         </tr></thead>
-        <tbody id="tbody-clients">
-    <tr>
-      <td><strong>CLI001</strong></td>
-      <td>Szalai Bagó Tünde</td>
-      <td style="color:var(--text2);font-size:12px">—</td>
-      <td><span class="badge ">Particulier</span></td>
-      <td>Germany</td><td style="font-size:11px">—</td>
-      <td><span class="badge eur">EUR</span></td>
-      <td>40 €/h</td>
-      <td style="white-space:nowrap;display:flex;gap:3px">
-        <button class="btn xs" onclick="modifierClient(&#39;CLI001&#39;)" style="color:var(--accent2);border-color:var(--accent2)">✎ Modifier</button>
-        <button class="btn xs" onclick="chargerClientDansFacture(&#39;CLI001&#39;)">Facturer</button>
-        <button class="btn xs danger" onclick="supprimerClient(&#39;CLI001&#39;)">Suppr.</button>
-      </td>
-    </tr>
-    <tr>
-      <td><strong>CLI002</strong></td>
-      <td>Miko - Kövesdi Andrea</td>
-      <td style="color:var(--text2);font-size:12px">—</td>
-      <td><span class="badge ">Particulier</span></td>
-      <td>Switzerland</td><td style="font-size:11px">—</td>
-      <td><span class="badge eur">EUR</span></td>
-      <td>40 €/h</td>
-      <td style="white-space:nowrap;display:flex;gap:3px">
-        <button class="btn xs" onclick="modifierClient(&#39;CLI002&#39;)" style="color:var(--accent2);border-color:var(--accent2)">✎ Modifier</button>
-        <button class="btn xs" onclick="chargerClientDansFacture(&#39;CLI002&#39;)">Facturer</button>
-        <button class="btn xs danger" onclick="supprimerClient(&#39;CLI002&#39;)">Suppr.</button>
-      </td>
-    </tr>
-    <tr>
-      <td><strong>CLI003</strong></td>
-      <td>DOVER Dover Nyelvi Centrum</td>
-      <td style="color:var(--text2);font-size:12px">—</td>
-      <td><span class="badge ue">Professionnel UE</span></td>
-      <td>Hungary</td><td style="font-size:11px">—</td>
-      <td><span class="badge huf">HUF</span></td>
-      <td>5000 €/h</td>
-      <td style="white-space:nowrap;display:flex;gap:3px">
-        <button class="btn xs" onclick="modifierClient(&#39;CLI003&#39;)" style="color:var(--accent2);border-color:var(--accent2)">✎ Modifier</button>
-        <button class="btn xs" onclick="chargerClientDansFacture(&#39;CLI003&#39;)">Facturer</button>
-        <button class="btn xs danger" onclick="supprimerClient(&#39;CLI003&#39;)">Suppr.</button>
-      </td>
-    </tr>
-    <tr>
-      <td><strong>DOVER</strong></td>
-      <td>toto titi</td>
-      <td style="color:var(--text2);font-size:12px">—</td>
-      <td><span class="badge ">Particulier</span></td>
-      <td>FRANCE</td><td style="font-size:11px">—</td>
-      <td><span class="badge eur">EUR</span></td>
-      <td>—</td>
-      <td style="white-space:nowrap;display:flex;gap:3px">
-        <button class="btn xs" onclick="modifierClient(&#39;DOVER&#39;)" style="color:var(--accent2);border-color:var(--accent2)">✎ Modifier</button>
-        <button class="btn xs" onclick="chargerClientDansFacture(&#39;DOVER&#39;)">Facturer</button>
-        <button class="btn xs danger" onclick="supprimerClient(&#39;DOVER&#39;)">Suppr.</button>
-      </td>
-    </tr></tbody>
+        <tbody id="tbody-clients"></tbody>
       </table>
     </div>
   </div>
@@ -328,82 +273,34 @@ tbody tr:hover td{background:var(--bg2)}
 <!-- DEVISES -->
 <div id="panel-devises" class="panel">
   <div class="card">
-    <div class="card-title"><h2>⚙ <span data-t="dev_active">Devise active</span></h2></div>
+    <div class="card-title"><h2>&#9881; <span data-t="dev_active">Devise active</span></h2></div>
     <div class="form-grid fg-4">
-      <div class="field"><label data-t="dev_facturee">Devise facturée</label><select id="devise-active" onchange="changerDeviseActive()"><option value="EUR">EUR – Euro (€)</option><option value="HUF">HUF – Forint hongrois (Ft)</option><option value="USD">USD – Dollar américain ($)</option><option value="GBP">GBP – Livre sterling (£)</option><option value="CHF">CHF – Franc suisse (CHF)</option><option value="PLN">PLN – Złoty polonais (zł)</option></select></div>
-      <div class="field"><label data-t="dev_symbole">Symbole</label><input id="d-sym" readonly=""></div>
+      <div class="field"><label data-t="dev_facturee">Devise facturée</label><select id="devise-active" onchange="changerDeviseActive()"></select></div>
+      <div class="field"><label data-t="dev_symbole">Symbole</label><input id="d-sym" readonly></div>
       <div class="field"><label data-t="dev_taux_lbl">Taux (1 EUR = X devise)</label><input id="d-taux-actif" type="number" step="0.0001" oninput="majTauxActif()"></div>
       <div class="field"><label data-t="dev_date_lbl">Date mise à jour</label><input id="d-date-maj" type="date"></div>
     </div>
     <div style="margin-top:11px">
       <div class="devise-active" id="devise-banner">
-        <span class="devise-sym huf" id="d-icon">Ft</span>
-        <div><div style="font-weight:600;font-size:14px" id="d-banner-title">Forint hongrois (HUF)</div><div style="font-size:12px;color:var(--text2)" id="d-banner-sub">1 EUR = 400.0000 HUF</div></div>
+        <span class="devise-sym eur" id="d-icon">€</span>
+        <div><div style="font-weight:600;font-size:14px" id="d-banner-title">Euro (EUR)</div><div style="font-size:12px;color:var(--text2)" id="d-banner-sub">1 EUR = 1.0000 EUR</div></div>
       </div>
     </div>
   </div>
   <div class="card">
-    <div class="card-title"><h2>📉 <span data-t="dev_table">Table des taux de change</span></h2></div>
+    <div class="card-title"><h2>&#128201; <span data-t="dev_table">Table des taux de change</span></h2></div>
     <div class="tbl-wrap">
       <table>
         <thead><tr>
           <th data-t="th_code">Code</th><th data-t="th_nom_dev">Nom</th><th data-t="dev_symbole">Symbole</th>
-          <th>1 EUR =</th><th data-t="dev_date_lbl">Date mise à jour</th><th data-t="th_source">Source</th><th data-t="th_actions">Actions</th>
+          <th>1 EUR =</th><th data-t="dev_date_lbl">Mise à jour</th><th data-t="th_source">Source</th><th data-t="th_actions">Actions</th>
         </tr></thead>
-        <tbody id="tbody-devises">
-    <tr>
-      <td><strong>EUR</strong></td><td>Euro</td>
-      <td style="font-size:16px;font-weight:600;color:var(--eur)">€</td>
-      <td><input type="number" step="0.0001" value="1" style="width:88px;padding:3px 7px;border:1px solid var(--border2);border-radius:6px;font-size:12px" onchange="majTauxLigne(0,this.value)"></td>
-      <td style="font-size:11px;color:var(--text2)">—</td>
-      <td style="font-size:11px;color:var(--text2)">Devise de base</td>
-      <td>—</td>
-    </tr>
-    <tr>
-      <td><strong>HUF</strong></td><td>Forint hongrois</td>
-      <td style="font-size:16px;font-weight:600;color:var(--huf)">Ft</td>
-      <td><input type="number" step="0.0001" value="400" style="width:88px;padding:3px 7px;border:1px solid var(--border2);border-radius:6px;font-size:12px" onchange="majTauxLigne(1,this.value)"></td>
-      <td style="font-size:11px;color:var(--text2)">—</td>
-      <td style="font-size:11px;color:var(--text2)">mnb.hu / xe.com</td>
-      <td><button class="btn xs danger" onclick="supprimerDevise(&#39;HUF&#39;)">Suppr.</button></td>
-    </tr>
-    <tr>
-      <td><strong>USD</strong></td><td>Dollar américain</td>
-      <td style="font-size:16px;font-weight:600;color:var(--eur)">$</td>
-      <td><input type="number" step="0.0001" value="1.08" style="width:88px;padding:3px 7px;border:1px solid var(--border2);border-radius:6px;font-size:12px" onchange="majTauxLigne(2,this.value)"></td>
-      <td style="font-size:11px;color:var(--text2)">—</td>
-      <td style="font-size:11px;color:var(--text2)">ecb.europa.eu</td>
-      <td><button class="btn xs danger" onclick="supprimerDevise(&#39;USD&#39;)">Suppr.</button></td>
-    </tr>
-    <tr>
-      <td><strong>GBP</strong></td><td>Livre sterling</td>
-      <td style="font-size:16px;font-weight:600;color:var(--eur)">£</td>
-      <td><input type="number" step="0.0001" value="0.85" style="width:88px;padding:3px 7px;border:1px solid var(--border2);border-radius:6px;font-size:12px" onchange="majTauxLigne(3,this.value)"></td>
-      <td style="font-size:11px;color:var(--text2)">—</td>
-      <td style="font-size:11px;color:var(--text2)">ecb.europa.eu</td>
-      <td><button class="btn xs danger" onclick="supprimerDevise(&#39;GBP&#39;)">Suppr.</button></td>
-    </tr>
-    <tr>
-      <td><strong>CHF</strong></td><td>Franc suisse</td>
-      <td style="font-size:16px;font-weight:600;color:var(--eur)">CHF</td>
-      <td><input type="number" step="0.0001" value="0.96" style="width:88px;padding:3px 7px;border:1px solid var(--border2);border-radius:6px;font-size:12px" onchange="majTauxLigne(4,this.value)"></td>
-      <td style="font-size:11px;color:var(--text2)">—</td>
-      <td style="font-size:11px;color:var(--text2)">snb.ch</td>
-      <td><button class="btn xs danger" onclick="supprimerDevise(&#39;CHF&#39;)">Suppr.</button></td>
-    </tr>
-    <tr>
-      <td><strong>PLN</strong></td><td>Złoty polonais</td>
-      <td style="font-size:16px;font-weight:600;color:var(--eur)">zł</td>
-      <td><input type="number" step="0.0001" value="4.25" style="width:88px;padding:3px 7px;border:1px solid var(--border2);border-radius:6px;font-size:12px" onchange="majTauxLigne(5,this.value)"></td>
-      <td style="font-size:11px;color:var(--text2)">—</td>
-      <td style="font-size:11px;color:var(--text2)">nbp.pl</td>
-      <td><button class="btn xs danger" onclick="supprimerDevise(&#39;PLN&#39;)">Suppr.</button></td>
-    </tr></tbody>
+        <tbody id="tbody-devises"></tbody>
       </table>
     </div>
   </div>
   <div class="card">
-    <div class="card-title"><h2>➕ <span data-t="dev_ajouter">Ajouter une devise</span></h2></div>
+    <div class="card-title"><h2>&#10133; <span data-t="dev_ajouter">Ajouter une devise</span></h2></div>
     <div class="form-grid fg-5">
       <div class="field"><label data-t="dev_code_iso">Code ISO</label><input id="nd-code" placeholder="PLN" maxlength="3" style="text-transform:uppercase"></div>
       <div class="field"><label data-t="dev_nom_complet">Nom complet</label><input id="nd-nom"></div>
@@ -412,17 +309,17 @@ tbody tr:hover td{background:var(--bg2)}
       <div class="field"><label data-t="th_source">Source</label><input id="nd-src"></div>
     </div>
     <div class="btn-row" style="margin-top:9px">
-      <button class="btn primary" onclick="ajouterDevise()" data-t="btn_add_devise">+ Ajouter</button>
+      <button class="btn primary" onclick="ajouterDevise()" data-t="btn_add_devise">&#10133; Ajouter</button>
       <span id="toast-devise" class="toast"></span>
     </div>
   </div>
   <div class="card">
-    <div class="card-title"><h2>🔄 <span data-t="conv_title">Convertisseur rapide</span></h2></div>
+    <div class="card-title"><h2>&#128260; <span data-t="conv_title">Convertisseur rapide</span></h2></div>
     <div class="form-grid fg-4">
       <div class="field"><label data-t="conv_montant">Montant en EUR</label><input id="conv-eur" type="number" value="100" step="0.01" oninput="convertir()"></div>
-      <div class="field"><label data-t="conv_vers">Vers la devise</label><select id="conv-vers" onchange="convertir()"><option value="EUR">EUR – Euro (€)</option><option value="HUF">HUF – Forint hongrois (Ft)</option><option value="USD">USD – Dollar américain ($)</option><option value="GBP">GBP – Livre sterling (£)</option><option value="CHF">CHF – Franc suisse (CHF)</option><option value="PLN">PLN – Złoty polonais (zł)</option></select></div>
-      <div class="field"><label data-t="conv_resultat">Résultat</label><div class="conv-result" id="conv-res">100.00 €</div></div>
-      <div class="field"><label data-t="conv_retour">Retour EUR (vérif.)</label><div class="conv-result" id="conv-retour" style="font-size:14px;color:var(--text2)">100.00 €</div></div>
+      <div class="field"><label data-t="conv_vers">Vers la devise</label><select id="conv-vers" onchange="convertir()"></select></div>
+      <div class="field"><label data-t="conv_resultat">Résultat</label><div class="conv-result" id="conv-res">—</div></div>
+      <div class="field"><label data-t="conv_retour">Retour EUR (vérif.)</label><div class="conv-result" id="conv-retour" style="font-size:14px;color:var(--text2)">—</div></div>
     </div>
   </div>
 </div>
@@ -431,11 +328,11 @@ tbody tr:hover td{background:var(--bg2)}
 <div id="panel-facture" class="panel">
   <div class="card">
     <div class="card-title">
-      <h2>📄 <span data-t="fact_entete">En-tête de facture</span> <span id="fact-form-title" style="font-size:13px;font-weight:400;color:var(--accent2);margin-left:6px"></span></h2>
-      <button class="btn sm gold" onclick="imprimerFacture()" data-t="btn_print">🖨 Imprimer / PDF</button>
+      <h2>&#128196; <span data-t="fact_entete">En-tête de facture</span> <span id="fact-form-title" style="font-size:13px;font-weight:400;color:var(--accent2);margin-left:6px"></span></h2>
+      <button class="btn sm gold" onclick="imprimerFacture()" data-t="btn_print">&#128424; Imprimer / PDF</button>
     </div>
     <div class="form-grid fg-4">
-      <div class="field"><label data-t="fact_num_lbl">N° de facture *</label><input id="f-num" readonly="" style="background:var(--bg2);color:var(--text2);font-weight:600" value="FAC-001"></div>
+      <div class="field"><label data-t="fact_num_lbl">N° de facture</label><input id="f-num" readonly style="background:var(--bg2);color:var(--text2);font-weight:600" value="FAC-001"></div>
       <div class="field"><label data-t="fact_date_lbl">Date d'émission</label><input id="f-date" type="date"></div>
       <div class="field"><label data-t="fact_periode_lbl">Période couverte</label><input id="f-periode"></div>
       <div class="field"><label data-t="fact_mode_lbl">Mode de règlement</label>
@@ -448,165 +345,132 @@ tbody tr:hover td{background:var(--bg2)}
       </div>
     </div>
     <div class="form-grid fg-3" style="margin-top:9px">
-      <div class="field span2"><label data-t="fact_client_lbl">Client *</label>
-        <select id="f-client" onchange="remplirClient()"><option value="">— Sélectionner un client —</option><option value="CLI001">CLI001 – Szalai Bagó Tünde</option><option value="CLI002">CLI002 – Miko - Kövesdi Andrea</option><option value="CLI003">CLI003 – DOVER Dover Nyelvi Centrum</option><option value="DOVER">DOVER – toto titi</option></select>
+      <div class="field span2"><label data-t="fact_client_lbl">Client <span class="req">*</span></label>
+        <select id="f-client" onchange="remplirClient()"><option value="" data-t="client_select_ph">— Sélectionner un client —</option></select>
       </div>
       <div class="field"><label data-t="fact_tva_client_lbl">SIREN / N° TVA client (si pro)</label><input id="f-tva-client"></div>
     </div>
     <div id="client-info" class="client-info" style="margin-top:9px"></div>
   </div>
   <div class="card">
-    <div class="card-title"><h2>💰 <span data-t="dev_devise_conv">Devise &amp; conversion</span></h2></div>
+    <div class="card-title"><h2>&#128176; <span data-t="dev_devise_conv">Devise &amp; conversion</span></h2></div>
     <div class="form-grid fg-3">
-      <div class="field"><label data-t="dev_facturee">Devise facturée</label><select id="f-devise" onchange="onChangeDeviseFacture()"><option value="EUR">EUR – Euro (€)</option><option value="HUF">HUF – Forint hongrois (Ft)</option><option value="USD">USD – Dollar américain ($)</option><option value="GBP">GBP – Livre sterling (£)</option><option value="CHF">CHF – Franc suisse (CHF)</option><option value="PLN">PLN – Złoty polonais (zł)</option></select></div>
-      <div class="field"><label data-t="dev_taux_lbl">Taux (1 EUR = X devise)</label><input id="f-taux" type="number" step="0.0001" value="1" oninput="majTotaux()"></div>
-      <div class="field"><label data-t="dev_symbole">Symbole</label><input id="f-sym" readonly="" value="€"></div>
+      <div class="field"><label data-t="dev_facturee">Devise de facturation</label><select id="f-devise" onchange="onChangeDeviseFacture()"></select></div>
+      <div class="field"><label data-t="dev_taux_lbl">Taux appliqué (1 EUR =)</label><input id="f-taux" type="number" step="0.0001" value="1" oninput="majTotaux()"></div>
+      <div class="field"><label data-t="dev_symbole">Symbole affiché</label><input id="f-sym" readonly value="€"></div>
     </div>
   </div>
   <div class="card">
-    <div class="card-title"><h2>📋 <span data-t="fact_lignes">Lignes de prestations</span></h2></div>
+    <div class="card-title"><h2>&#128203; <span data-t="fact_lignes">Lignes de prestations</span></h2></div>
     <div class="ligne-hdr" style="margin-bottom:4px">
       <label data-t="col_desc">Description</label>
       <label data-t="col_date">Date</label>
       <label data-t="col_qty">Qtité (h)</label>
-      <label data-t="col_pu">PU</label>
+      <label data-t="col_pu">PU (<span id="pu-sym">€</span>)</label>
       <label data-t="col_montant">Montant</label>
       <span></span>
     </div>
-    <div id="lignes-wrap" style="display:flex;flex-direction:column;gap:5px"><div style="text-align:center;color:var(--text3);padding:14px;font-style:italic;font-size:13px">Aucune ligne. Cliquez sur « + Ajouter une ligne ».</div></div>
-    <button class="btn sm" style="margin-top:9px" onclick="ajouterLigne()" data-t="btn_add_ligne">+ Ajouter une ligne</button>
+    <div id="lignes-wrap" style="display:flex;flex-direction:column;gap:5px"></div>
+    <button class="btn sm" style="margin-top:9px" onclick="ajouterLigne()" data-t="btn_add_ligne">&#10133; Ajouter une ligne</button>
   </div>
   <div class="totaux">
-    <div class="line"><span data-t="sous_total">Sous-total HT</span><strong id="f-sous-total">0,00 Ft</strong></div>
+    <div class="line"><span data-t="sous_total">Sous-total HT</span><strong id="f-sous-total">0,00 €</strong></div>
     <div class="tva-note" data-t="tva_note">TVA non applicable, art. 293 B du CGI</div>
-    <div class="eq" id="eq-eur-wrap" style="display: flex;"><span data-t="eq_eur">Équivalent EUR indicatif</span><strong id="f-eq-eur">0,00 €</strong></div>
-    <div class="grand"><span data-t="total_ttc">TOTAL TTC</span><span id="f-total">0,00 Ft</span></div>
+    <div class="eq" id="eq-eur-wrap"><span data-t="eq_eur">Équivalent EUR indicatif</span><strong id="f-eq-eur">—</strong></div>
+    <div class="grand"><span data-t="total_ttc">TOTAL TTC</span><span id="f-total">0,00 €</span></div>
   </div>
   <div class="btn-row">
-    <button id="btn-enregistrer-fact" class="btn primary" onclick="enregistrerFacture()" data-t="btn_save_fact">✓ Enregistrer la facture</button>
-    <button class="btn" onclick="nouvelleFacture()" data-t="btn_new_fact">✚ Nouvelle facture</button>
+    <button id="btn-enregistrer-fact" class="btn primary" onclick="enregistrerFacture()" data-t="btn_save_fact">&#10003; Enregistrer la facture</button>
+    <button class="btn" onclick="nouvelleFacture()" data-t="btn_new_fact">&#10010; Nouvelle facture</button>
     <span id="toast-facture" class="toast"></span>
   </div>
 </div>
 
 <!-- SUIVI -->
 <div id="panel-suivi" class="panel">
-  <div class="stats" id="stats-bloc">
-    <div class="stat"><div class="lbl">Factures</div><div class="val">4</div></div>
-    <div class="stat"><div class="lbl">Total facturé</div><div class="val">50 490 €</div></div>
-    <div class="stat"><div class="lbl">Encaissé</div><div class="val" style="color:var(--green)">385 €</div></div>
-    <div class="stat"><div class="lbl">En attente</div><div class="val" style="color:var(--orange)">50 105 €</div></div>
-    <div class="stat"><div class="lbl">En retard</div><div class="val" style="color:var(--red)">0 €</div></div></div>
+  <div class="stats" id="stats-bloc"></div>
   <div class="card">
     <div class="card-title">
-      <h2>📋 <span data-t="suivi_title">Toutes les factures</span></h2>
+      <h2>&#128203; <span data-t="suivi_title">Toutes les factures</span></h2>
       <div style="display:flex;gap:8px">
         <select id="filtre-statut" onchange="renderSuivi()" style="font-size:12px;padding:4px 8px">
           <option value="" data-t="statut_tous">Tous statuts</option>
-          <option data-t="statut_attente" value="En attente">En attente</option>
-          <option data-t="statut_envoyee" value="Envoyée">Envoyée</option>
-          <option data-t="statut_payee" value="Payée">Payée</option>
-          <option data-t="statut_retard" value="En retard">En retard</option>
+          <option data-t="statut_attente">En attente</option>
+          <option data-t="statut_envoyee">Envoyée</option>
+          <option data-t="statut_payee">Payée</option>
+          <option data-t="statut_retard">En retard</option>
         </select>
-        <input type="text" id="search-facture" oninput="renderSuivi()" style="width:140px;font-size:12px;padding:4px 8px" data-t-ph="search_ph" placeholder="Rechercher…">
+        <input type="text" id="search-facture" oninput="renderSuivi()" style="width:140px;font-size:12px;padding:4px 8px" data-t-ph="search_ph">
       </div>
     </div>
     <div class="tbl-wrap">
       <table>
         <thead><tr>
-          <th data-t="fact_num_lbl">N° de facture *</th><th data-t="col_date">Date</th><th data-t="th_nom">Nom</th>
+          <th data-t="fact_num_lbl">N°</th><th data-t="col_date">Date</th><th data-t="th_nom">Client</th>
           <th data-t="col_montant">Montant</th><th data-t="th_devise">Devise</th><th>EUR eq.</th>
           <th data-t="th_statut">Statut</th><th data-t="th_echeance">Échéance</th><th data-t="th_actions">Actions</th>
         </tr></thead>
-        <tbody id="tbody-suivi"><tr>
-      <td><strong>FAC-2024-001</strong></td>
-      <td style="font-size:11px">02/04/2026</td>
-      <td>Szalai Bagó</td>
-      <td style="font-weight:600">40,00 €</td>
-      <td><span class="badge eur">EUR</span></td>
-      <td style="font-size:11px;color:var(--text2)">—</td>
-      <td><select onchange="majStatut(0,this.value)" style="font-size:11px;padding:3px 6px;border:1px solid var(--border2);border-radius:6px;background:var(--bg)">
-        <option selected="">En attente</option><option>Envoyée</option><option>Payée</option><option>En retard</option>
-      </select></td>
-      <td style="font-size:11px;color:var(--text2)">02/05/2026</td>
-      <td style="white-space:nowrap;display:flex;gap:3px">
-        <button class="btn xs" style="color:var(--accent2);border-color:var(--accent2)" onclick="modifierFacture(0)">✎ Modifier</button>
-        <button class="btn xs" onclick="voirFacture(0)">Voir</button>
-        <button class="btn xs danger" onclick="supprimerFacture(0)">Suppr.</button>
-      </td>
-    </tr><tr>
-      <td><strong>FAC-2024-002</strong></td>
-      <td style="font-size:11px">02/04/2026</td>
-      <td>Szalai Bagó</td>
-      <td style="font-weight:600">65,00 €</td>
-      <td><span class="badge eur">EUR</span></td>
-      <td style="font-size:11px;color:var(--text2)">—</td>
-      <td><select onchange="majStatut(1,this.value)" style="font-size:11px;padding:3px 6px;border:1px solid var(--border2);border-radius:6px;background:var(--bg)">
-        <option selected="">En attente</option><option>Envoyée</option><option>Payée</option><option>En retard</option>
-      </select></td>
-      <td style="font-size:11px;color:var(--text2)">02/05/2026</td>
-      <td style="white-space:nowrap;display:flex;gap:3px">
-        <button class="btn xs" style="color:var(--accent2);border-color:var(--accent2)" onclick="modifierFacture(1)">✎ Modifier</button>
-        <button class="btn xs" onclick="voirFacture(1)">Voir</button>
-        <button class="btn xs danger" onclick="supprimerFacture(1)">Suppr.</button>
-      </td>
-    </tr><tr>
-      <td><strong>FAC-2024-010</strong></td>
-      <td style="font-size:11px">09/04/2026</td>
-      <td>DOVER</td>
-      <td style="font-weight:600">154 000,00 Ft</td>
-      <td><span class="badge huf">HUF</span></td>
-      <td style="font-size:11px;color:var(--text2)">385,00 €</td>
-      <td><select onchange="majStatut(2,this.value)" style="font-size:11px;padding:3px 6px;border:1px solid var(--border2);border-radius:6px;background:var(--bg)">
-        <option>En attente</option><option>Envoyée</option><option selected="">Payée</option><option>En retard</option>
-      </select></td>
-      <td style="font-size:11px;color:var(--text2)">09/05/2026</td>
-      <td style="white-space:nowrap;display:flex;gap:3px">
-        
-        <button class="btn xs" onclick="voirFacture(2)">Voir</button>
-        <button class="btn xs danger" onclick="supprimerFacture(2)">Suppr.</button>
-      </td>
-    </tr><tr>
-      <td><strong>FAC-2024-011</strong></td>
-      <td style="font-size:11px">06/04/2026</td>
-      <td>toto</td>
-      <td style="font-weight:600">50 000,00 €</td>
-      <td><span class="badge eur">EUR</span></td>
-      <td style="font-size:11px;color:var(--text2)">—</td>
-      <td><select onchange="majStatut(3,this.value)" style="font-size:11px;padding:3px 6px;border:1px solid var(--border2);border-radius:6px;background:var(--bg)">
-        <option>En attente</option><option selected="">Envoyée</option><option>Payée</option><option>En retard</option>
-      </select></td>
-      <td style="font-size:11px;color:var(--text2)">06/05/2026</td>
-      <td style="white-space:nowrap;display:flex;gap:3px">
-        
-        <button class="btn xs" onclick="voirFacture(3)">Voir</button>
-        <button class="btn xs danger" onclick="supprimerFacture(3)">Suppr.</button>
-      </td>
-    </tr></tbody>
+        <tbody id="tbody-suivi"></tbody>
       </table>
     </div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div id="panel-stats" class="panel">
+  <!-- Sélecteur année -->
+  <div class="card" style="padding:12px 18px">
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <h2 style="flex:1">&#128200; <span data-t="stats_title">Statistiques</span></h2>
+      <div style="display:flex;align-items:center;gap:8px">
+        <label style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.04em" data-t="stats_annee">Année</label>
+        <select id="stats-annee" onchange="renderStats()" style="font-size:13px;padding:5px 10px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--bg)"></select>
+        <button class="btn sm" onclick="renderStats()" style="color:var(--accent2);border-color:var(--accent2)">&#8635;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPIs annuels -->
+  <div class="stats" id="stats-kpi"></div>
+
+  <!-- Graphique trimestriel -->
+  <div class="card">
+    <div class="card-title"><h2>&#128201; <span data-t="stats_trim_title">Facturation trimestrielle</span></h2></div>
+    <div id="chart-trim" style="overflow-x:auto"></div>
+  </div>
+
+  <!-- Graphique par client -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px" id="stats-client-grid">
+    <div class="card">
+      <div class="card-title"><h2>&#128100; <span data-t="stats_client_title">Répartition par client</span></h2></div>
+      <div id="chart-pie" style="display:flex;justify-content:center;padding:8px 0"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><h2>&#128203; <span data-t="stats_client_detail">Détail par client</span></h2></div>
+      <div id="chart-clients" style="overflow-x:auto"></div>
+    </div>
+  </div>
+
+  <!-- Évolution mensuelle -->
+  <div class="card">
+    <div class="card-title"><h2>&#128200; <span data-t="stats_evol_title">Évolution mensuelle</span></h2></div>
+    <div id="chart-evol" style="overflow-x:auto"></div>
   </div>
 </div>
 
 <!-- GUIDE -->
 <div id="panel-guide" class="panel">
   <div class="card" id="guide-card-1">
-    <h2 style="margin-bottom:12px">⚖ <span data-t="guide_title1">Mentions obligatoires – Toutes factures</span></h2>
-    <div id="guide-table-1"><table style="width:100%;font-size:13px;border-collapse:collapse">
-    <tbody><tr style="background:var(--bg2)"><th style="padding:8px;text-align:left;border:1px solid var(--border)">Mention</th><th style="padding:8px;text-align:left;border:1px solid var(--border)">Détail</th></tr>
-    <tr style="background:var(--bg2)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">Nom &amp; prénom + EI</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">Ex : Dupont Marie EI — « EI » obligatoire depuis 2022</td></tr><tr style="background:var(--bg)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">SIRET (14 chiffres)</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">Visible sur votre avis SIRENE ou autoentrepreneur.urssaf.fr</td></tr><tr style="background:var(--bg2)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">Code APE / NAF</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">8559Z pour les cours particuliers de langues</td></tr><tr style="background:var(--bg)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">Numéro de facture</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">Séquence chronologique sans trou — FAC-2024-001, FAC-2024-002…</td></tr><tr style="background:var(--bg2)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">Date d'émission</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">Date de création de la facture</td></tr><tr style="background:var(--bg)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">Date / période de la prestation</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">Ex : 04/01/2024 ou « Janvier 2024 »</td></tr><tr style="background:var(--bg2)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">Description précise</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">Ex : Cours d'allemand individuel – Niveau B1 – 2h</td></tr><tr style="background:var(--bg)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">Catégorie de l'opération (depuis juil. 2024)</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">« Prestation de service »</td></tr><tr style="background:var(--bg2)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">Quantité × Prix unitaire HT</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">Heures × tarif horaire</td></tr><tr style="background:var(--bg)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">Nom &amp; adresse du client</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">Particulier ou raison sociale + adresse</td></tr><tr style="background:var(--bg2)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">Mention TVA</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">« TVA non applicable, art. 293 B du CGI » — OBLIGATOIRE</td></tr><tr style="background:var(--bg)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">Conditions de paiement</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">Date limite, mode, escompte (même si 0%)</td></tr>
-  </tbody></table></div>
+    <h2 style="margin-bottom:12px">&#9878; <span data-t="guide_title1">Mentions obligatoires – Toutes factures</span></h2>
+    <div id="guide-table-1"></div>
   </div>
   <div class="card" id="guide-card-2">
-    <h2 style="margin-bottom:12px">🇪🇺 <span data-t="guide_title2">Mentions supplémentaires – Client professionnel UE</span></h2>
-    <div id="guide-table-2"><table style="width:100%;font-size:13px;border-collapse:collapse">
-    <tbody><tr style="background:var(--bg2)"><th style="padding:8px;text-align:left;border:1px solid var(--border)">Mention</th><th style="padding:8px;text-align:left;border:1px solid var(--border)">Détail</th></tr>
-    <tr style="background:var(--bg2)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">Votre N° TVA intracommunautaire</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">FR XX XXXXXXXXX — à demander gratuitement à votre SIE</td></tr><tr style="background:var(--bg)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">N° TVA intracom du client</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">À VÉRIFIER sur ec.europa.eu/taxation_customs/vies/</td></tr><tr style="background:var(--bg2)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">Double mention TVA</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">① Art. 293 B CGI  ② Autoliquidation par le preneur, art. 283-2 CGI</td></tr><tr style="background:var(--bg)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">DES (Déclaration Européenne de Services)</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">Obligatoire avant le 10 du mois suivant — douane.gouv.fr</td></tr><tr style="background:var(--bg2)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">Indemnité forfaitaire 40 €</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">Due de plein droit en cas de retard — art. L441-10 Code de commerce</td></tr><tr style="background:var(--bg)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">Pénalités de retard</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">Taux légal × 3 minimum, exigibles dès le lendemain de l'échéance</td></tr><tr style="background:var(--bg2)"><td style="padding:8px;border:1px solid var(--border);font-weight:500">SIREN client (pro France uniquement)</td><td style="padding:8px;border:1px solid var(--border);color:var(--text2)">Obligatoire depuis le 1er juillet 2024</td></tr>
-  </tbody></table></div>
+    <h2 style="margin-bottom:12px">&#127466;&#127482; <span data-t="guide_title2">Mentions supplémentaires – Client professionnel UE</span></h2>
+    <div id="guide-table-2"></div>
   </div>
   <div class="card" style="background:var(--orange-light);border-color:#ffcc80" id="guide-card-3">
-    <h2 style="margin-bottom:10px;color:var(--orange)">⚠ <span data-t="guide_title3">Checklist avant envoi</span></h2>
-    <div id="guide-checklist" style="columns:2;gap:20px;font-size:13px;line-height:2;color:var(--text2)"><div>☐ N° de facture séquentiel sans trou</div><div>☐ SIRET à 14 chiffres</div><div>☐ Mention TVA art. 293 B présente</div><div>☐ Client pro France → SIREN noté</div><div>☐ Client pro UE → N° TVA vérifié sur VIES</div><div>☐ Client pro UE → double mention autoliquidation</div><div>☐ Client pro UE → DES à déposer avant le 10</div><div>☐ Indemnité 40 € mentionnée (pro)</div><div>☐ Pénalités de retard mentionnées (pro)</div><div>☐ Catégorie « Prestation de service » indiquée</div><div>☐ Facture conservée 10 ans</div></div>
+    <h2 style="margin-bottom:10px;color:var(--orange)">&#9888; <span data-t="guide_title3">Checklist avant envoi</span></h2>
+    <div id="guide-checklist" style="columns:2;gap:20px;font-size:13px;line-height:2;color:var(--text2)"></div>
   </div>
 </div>
 
@@ -1322,6 +1186,7 @@ async function sbLoadFromCloud() {
       try { loadParametresUI(); } catch(e) { console.error('loadParametresUI:', e); }
       try { renderTableClients(); } catch(e) { console.error('renderTableClients:', e); }
       try { renderSuivi(); } catch(e) { console.error('renderSuivi:', e); }
+  try { if(document.getElementById('panel-stats')?.classList.contains('active')) renderStats(); } catch(e) {}
     }
 
     const now = new Date().toLocaleTimeString(T[lang].locale,{hour:'2-digit',minute:'2-digit'});
@@ -1448,10 +1313,11 @@ function importData(e) {
 function showPanel(id) {
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('panel-'+id).classList.add('active');
-  const keys = ['parametres','clients','devises','facture','suivi','guide'];
+  const keys = ['parametres','clients','devises','facture','suivi','stats','guide'];
   document.querySelectorAll('nav button').forEach((b,i)=>b.classList.toggle('active',keys[i]===id));
   if(id==='facture') refreshClientSelect();
   if(id==='suivi') renderSuivi();
+  if(id==='stats') renderStats();
   if(id==='devises'){ refreshTableDevises(); refreshConvertisseur(); }
 }
 
@@ -2436,6 +2302,213 @@ function voirFacture(i){ _chargerFactureDansForm(i, false); }
 function modifierFacture(i){ _chargerFactureDansForm(i, true); }
 
 // ══════════════════════════════════════════════════════════════
+// STATISTIQUES
+// ══════════════════════════════════════════════════════════════
+function renderStats() {
+  // ── Helpers ──────────────────────────────────────────────────────────
+  const fmtEur = v => v.toLocaleString(T[lang].locale, {minimumFractionDigits:0, maximumFractionDigits:0}) + ' €';
+  const COLORS = ['#7b1e4a','#c2396e','#f48fb1','#e91e63','#ad1457','#880e4f','#f06292','#e57373','#ba68c8','#9575cd'];
+  const MONTHS_FR = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+  const MONTHS_HU = ['Jan','Feb','Már','Ápr','Máj','Jún','Júl','Aug','Sze','Okt','Nov','Dec'];
+  const MONTHS = lang === 'fr' ? MONTHS_FR : MONTHS_HU;
+
+  // ── Année sélectionnée ───────────────────────────────────────────────
+  const selAnne = document.getElementById('stats-annee');
+  if (!selAnne) return;
+
+  // Calculer toutes les années disponibles
+  const years = [...new Set(state.factures
+    .map(f => f.dateEmission ? new Date(f.dateEmission + 'T12:00').getFullYear() : null)
+    .filter(Boolean))].sort((a,b) => b - a);
+
+  if (!years.length) {
+    ['stats-kpi','chart-trim','chart-pie','chart-clients','chart-evol']
+      .forEach(id => { const el=document.getElementById(id); if(el) el.innerHTML=`<div style="text-align:center;color:var(--text3);padding:24px;font-style:italic">${t('stats_no_data')}</div>`; });
+    return;
+  }
+
+  // Peupler le sélecteur
+  const curYear = selAnne.value || String(years[0]);
+  selAnne.innerHTML = years.map(y => `<option value="${y}"${y==curYear?' selected':''}>${y}</option>`).join('');
+  const selectedYear = parseInt(selAnne.value || years[0]);
+
+  // Factures de l'année sélectionnée
+  const facYear = state.factures.filter(f => {
+    if (!f.dateEmission) return false;
+    return new Date(f.dateEmission + 'T12:00').getFullYear() === selectedYear;
+  });
+
+  // ── KPIs ──────────────────────────────────────────────────────────────
+  const totalAn = facYear.reduce((s,f) => s + (f.montantEur||0), 0);
+  const encaisseAn = facYear.filter(f => f.statut==='Payée'||f.statut===t('statut_payee')).reduce((s,f) => s+(f.montantEur||0), 0);
+  const nbFac = facYear.length;
+  const moy = nbFac ? totalAn / nbFac : 0;
+
+  const kpi = document.getElementById('stats-kpi');
+  if (kpi) kpi.innerHTML = `
+    <div class="stat"><div class="lbl">${t('stats_kpi_facture')}</div><div class="val">${nbFac}</div></div>
+    <div class="stat"><div class="lbl">${t('stats_kpi_total')}</div><div class="val" style="font-size:16px">${fmtEur(totalAn)}</div></div>
+    <div class="stat"><div class="lbl">${t('stats_kpi_encaisse')}</div><div class="val" style="color:var(--green);font-size:16px">${fmtEur(encaisseAn)}</div></div>
+    <div class="stat"><div class="lbl">${t('stats_kpi_moy')}</div><div class="val" style="font-size:16px">${fmtEur(moy)}</div></div>`;
+
+  // ── Graphique trimestriel (barres SVG) ────────────────────────────────
+  const qLabels = [t('q1'),t('q2'),t('q3'),t('q4')];
+  const qData = [0,0,0,0];
+  const qPaye = [0,0,0,0];
+  facYear.forEach(f => {
+    const m = new Date(f.dateEmission + 'T12:00').getMonth();
+    const q = Math.floor(m / 3);
+    qData[q] += f.montantEur||0;
+    if(f.statut==='Payée'||f.statut===t('statut_payee')) qPaye[q] += f.montantEur||0;
+  });
+
+  const W=560, H=200, PAD={t:20,r:20,b:40,l:65};
+  const cW = W - PAD.l - PAD.r;
+  const cH = H - PAD.t - PAD.b;
+  const maxQ = Math.max(...qData, 1);
+  const barW = (cW / 4) * 0.55;
+  const barGap = cW / 4;
+
+  let svgTrim = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${W}px" xmlns="http://www.w3.org/2000/svg">`;
+  // Grille horizontale
+  [0,.25,.5,.75,1].forEach(pct => {
+    const y = PAD.t + cH * (1-pct);
+    const val = maxQ * pct;
+    svgTrim += `<line x1="${PAD.l}" y1="${y}" x2="${W-PAD.r}" y2="${y}" stroke="#e5e7eb" stroke-width="1"/>`;
+    svgTrim += `<text x="${PAD.l-6}" y="${y+4}" text-anchor="end" font-size="9" fill="#9ca3af">${fmtEur(val)}</text>`;
+  });
+
+  qData.forEach((val, qi) => {
+    const x = PAD.l + qi * barGap + barGap/2 - barW/2;
+    const bh = (val / maxQ) * cH;
+    const by = PAD.t + cH - bh;
+    const phPaye = qPaye[qi] / maxQ * cH;
+    // Barre totale (fond rose clair)
+    svgTrim += `<rect x="${x}" y="${by}" width="${barW}" height="${bh}" rx="3" fill="#fce4ec"/>`;
+    // Barre payée (bordeaux)
+    if(phPaye > 0) svgTrim += `<rect x="${x}" y="${PAD.t+cH-phPaye}" width="${barW}" height="${phPaye}" rx="3" fill="#7b1e4a"/>`;
+    // Label valeur
+    if(val > 0) svgTrim += `<text x="${x+barW/2}" y="${by-5}" text-anchor="middle" font-size="8.5" font-weight="600" fill="#7b1e4a">${fmtEur(val)}</text>`;
+    // Label trimestre
+    svgTrim += `<text x="${x+barW/2}" y="${H-PAD.b+14}" text-anchor="middle" font-size="11" font-weight="700" fill="#374151">${qLabels[qi]}</text>`;
+    svgTrim += `<text x="${x+barW/2}" y="${H-PAD.b+26}" text-anchor="middle" font-size="8.5" fill="#6b7280">${selectedYear}</text>`;
+  });
+  // Légende
+  svgTrim += `<rect x="${PAD.l}" y="${H-10}" width="10" height="8" rx="2" fill="#7b1e4a"/>`;
+  svgTrim += `<text x="${PAD.l+13}" y="${H-3}" font-size="8.5" fill="#555">${lang==='fr'?'Encaissé':'Befolyt'}</text>`;
+  svgTrim += `<rect x="${PAD.l+65}" y="${H-10}" width="10" height="8" rx="2" fill="#fce4ec" stroke="#f48fb1" stroke-width="1"/>`;
+  svgTrim += `<text x="${PAD.l+78}" y="${H-3}" font-size="8.5" fill="#555">${lang==='fr'?'En attente':'Függőben'}</text>`;
+  svgTrim += '</svg>';
+  const ctrim = document.getElementById('chart-trim');
+  if(ctrim) ctrim.innerHTML = svgTrim;
+
+  // ── Répartition par client (camembert SVG) ───────────────────────────
+  const clientMap = {};
+  facYear.forEach(f => {
+    const k = f.clientNom || '—';
+    clientMap[k] = (clientMap[k]||0) + (f.montantEur||0);
+  });
+  const clientEntries = Object.entries(clientMap).sort((a,b) => b[1]-a[1]);
+  const totalPie = clientEntries.reduce((s,[,v]) => s+v, 0);
+
+  // Camembert
+  const R=80, CX=110, CY=100;
+  let svgPie = `<svg viewBox="0 0 220 200" style="width:220px;min-width:220px" xmlns="http://www.w3.org/2000/svg">`;
+  let startAngle = -Math.PI/2;
+  clientEntries.forEach(([nom, val], ci) => {
+    const pct = val / (totalPie||1);
+    const endAngle = startAngle + pct * 2 * Math.PI;
+    const x1 = CX + R * Math.cos(startAngle);
+    const y1 = CY + R * Math.sin(startAngle);
+    const x2 = CX + R * Math.cos(endAngle);
+    const y2 = CY + R * Math.sin(endAngle);
+    const large = pct > 0.5 ? 1 : 0;
+    const col = COLORS[ci % COLORS.length];
+    svgPie += `<path d="M${CX},${CY} L${x1},${y1} A${R},${R} 0 ${large},1 ${x2},${y2} Z" fill="${col}" stroke="#fff" stroke-width="2">
+      <title>${nom}: ${fmtEur(val)} (${Math.round(pct*100)}%)</title></path>`;
+    // Label si pct > 5%
+    if(pct > 0.05){
+      const midA = startAngle + pct * Math.PI;
+      const lx = CX + (R*0.65) * Math.cos(midA);
+      const ly = CY + (R*0.65) * Math.sin(midA);
+      svgPie += `<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" font-size="9" font-weight="700" fill="#fff">${Math.round(pct*100)}%</text>`;
+    }
+    startAngle = endAngle;
+  });
+  svgPie += '</svg>';
+  const cpie = document.getElementById('chart-pie');
+  if(cpie) cpie.innerHTML = svgPie;
+
+  // ── Barres horizontales par client ────────────────────────────────────
+  const BW = 400, BH_ROW = 28, PAD_LEFT = 110;
+  const maxC = clientEntries[0]?.[1] || 1;
+  const svgH = Math.max(40, clientEntries.length * BH_ROW + 10);
+  let svgClients = `<svg viewBox="0 0 ${BW} ${svgH}" style="width:100%;max-width:${BW}px" xmlns="http://www.w3.org/2000/svg">`;
+  clientEntries.forEach(([nom, val], ci) => {
+    const y = ci * BH_ROW + 5;
+    const bw = (val/maxC) * (BW - PAD_LEFT - 80);
+    const pct = Math.round(val/(totalPie||1)*100);
+    const col = COLORS[ci % COLORS.length];
+    const shortNom = nom.length > 14 ? nom.slice(0,13)+'…' : nom;
+    svgClients += `<text x="${PAD_LEFT-6}" y="${y+16}" text-anchor="end" font-size="10" fill="#374151" font-weight="500">${shortNom}</text>`;
+    svgClients += `<rect x="${PAD_LEFT}" y="${y+4}" width="${bw}" height="16" rx="3" fill="${col}"/>`;
+    svgClients += `<text x="${PAD_LEFT+bw+5}" y="${y+16}" font-size="10" fill="#555">${fmtEur(val)} <tspan fill="#aaa">(${pct}%)</tspan></text>`;
+  });
+  svgClients += '</svg>';
+  const cclients = document.getElementById('chart-clients');
+  if(cclients) cclients.innerHTML = svgClients;
+
+  // ── Évolution mensuelle (ligne SVG) ───────────────────────────────────
+  const mData = Array(12).fill(0);
+  const mPaye = Array(12).fill(0);
+  facYear.forEach(f => {
+    const m = new Date(f.dateEmission + 'T12:00').getMonth();
+    mData[m] += f.montantEur||0;
+    if(f.statut==='Payée'||f.statut===t('statut_payee')) mPaye[m] += f.montantEur||0;
+  });
+  const WE=580, HE=180, PADE={t:20,r:20,b:35,l:65};
+  const cWE = WE-PADE.l-PADE.r, cHE = HE-PADE.t-PADE.b;
+  const maxM = Math.max(...mData, 1);
+  const xM = i => PADE.l + i * cWE/11;
+  const yM = v => PADE.t + cHE * (1 - v/maxM);
+
+  let svgEvol = `<svg viewBox="0 0 ${WE} ${HE}" style="width:100%;max-width:${WE}px" xmlns="http://www.w3.org/2000/svg">`;
+  // Grille
+  [0,.5,1].forEach(pct => {
+    const y = PADE.t + cHE*(1-pct);
+    svgEvol += `<line x1="${PADE.l}" y1="${y}" x2="${WE-PADE.r}" y2="${y}" stroke="#e5e7eb" stroke-width="1"/>`;
+    svgEvol += `<text x="${PADE.l-6}" y="${y+4}" text-anchor="end" font-size="8.5" fill="#9ca3af">${fmtEur(maxM*pct)}</text>`;
+  });
+  // Zone remplie (total)
+  let areaPath = `M${xM(0)},${yM(mData[0])}`;
+  for(let i=1;i<12;i++) areaPath += ` L${xM(i)},${yM(mData[i])}`;
+  areaPath += ` L${xM(11)},${PADE.t+cHE} L${xM(0)},${PADE.t+cHE} Z`;
+  svgEvol += `<path d="${areaPath}" fill="#fce4ec" opacity="0.6"/>`;
+  // Ligne totale
+  let linePath = `M${xM(0)},${yM(mData[0])}`;
+  for(let i=1;i<12;i++) linePath += ` L${xM(i)},${yM(mData[i])}`;
+  svgEvol += `<path d="${linePath}" fill="none" stroke="#f48fb1" stroke-width="2"/>`;
+  // Ligne payée
+  let lineP = `M${xM(0)},${yM(mPaye[0])}`;
+  for(let i=1;i<12;i++) lineP += ` L${xM(i)},${yM(mPaye[i])}`;
+  svgEvol += `<path d="${lineP}" fill="none" stroke="#7b1e4a" stroke-width="2" stroke-dasharray="4,2"/>`;
+  // Points + labels
+  mData.forEach((v,i) => {
+    svgEvol += `<circle cx="${xM(i)}" cy="${yM(v)}" r="3.5" fill="${v>0?'#7b1e4a':'#ddd'}"/>`;
+    if(v>0) svgEvol += `<text x="${xM(i)}" y="${yM(v)-7}" text-anchor="middle" font-size="7.5" fill="#7b1e4a" font-weight="600">${fmtEur(v)}</text>`;
+    svgEvol += `<text x="${xM(i)}" y="${HE-PADE.b+13}" text-anchor="middle" font-size="9" fill="#6b7280">${MONTHS[i]}</text>`;
+  });
+  // Légende
+  svgEvol += `<line x1="${PADE.l}" y1="${HE-4}" x2="${PADE.l+16}" y2="${HE-4}" stroke="#f48fb1" stroke-width="2"/>`;
+  svgEvol += `<text x="${PADE.l+19}" y="${HE}" font-size="8.5" fill="#555">${lang==='fr'?'Facturé':'Számlázva'}</text>`;
+  svgEvol += `<line x1="${PADE.l+70}" y1="${HE-4}" x2="${PADE.l+86}" y2="${HE-4}" stroke="#7b1e4a" stroke-width="2" stroke-dasharray="4,2"/>`;
+  svgEvol += `<text x="${PADE.l+89}" y="${HE}" font-size="8.5" fill="#555">${lang==='fr'?'Encaissé':'Befolyt'}</text>`;
+  svgEvol += '</svg>';
+  const cevol = document.getElementById('chart-evol');
+  if(cevol) cevol.innerHTML = svgEvol;
+}
+
+// ══════════════════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════════════════
 // refreshUI: re-render all UI from current state WITHOUT reloading localStorage
@@ -2483,5 +2556,5 @@ function initAll(){
 
 initAll();
 </script>
-
-</body></html>
+</body>
+</html>
