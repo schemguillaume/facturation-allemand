@@ -329,7 +329,10 @@ tbody tr:hover td{background:var(--bg2)}
   <div class="card">
     <div class="card-title">
       <h2>&#128196; <span data-t="fact_entete">En-tête de facture</span> <span id="fact-form-title" style="font-size:13px;font-weight:400;color:var(--accent2);margin-left:6px"></span></h2>
-      <button class="btn sm gold" onclick="imprimerFacture()" data-t="btn_print">&#128424; Imprimer / PDF</button>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button class="btn sm gold" onclick="imprimerFacture()" data-t="btn_print">&#128424; Imprimer / PDF</button>
+        <button class="btn sm" onclick="exporterUBL()" style="color:var(--accent2);border-color:var(--accent2)" data-t="btn_ubl">&#128196; Export UBL XML</button>
+      </div>
     </div>
     <div class="form-grid fg-4">
       <div class="field"><label data-t="fact_num_lbl">N° de facture</label><input id="f-num" readonly style="background:var(--bg2);color:var(--text2);font-weight:600" value="FAC-001"></div>
@@ -526,7 +529,8 @@ fr: {
   th_code:"Code", th_nom_dev:"Nom", btn_add_devise:"+ Ajouter",
   conv_title:"Convertisseur rapide", conv_montant:"Montant en EUR", conv_vers:"Vers la devise",
   conv_resultat:"Résultat", conv_retour:"Retour EUR (vérif.)",
-  fact_entete:"En-tête de facture", btn_print:"🖨 Imprimer / PDF",
+  fact_entete:"En-tête de facture",
+  btn_ubl:"↓ Export UBL XML", btn_print:"🖨 Imprimer / PDF",
   fact_num_lbl:"N° de facture *", fact_date_lbl:"Date d'émission", fact_periode_lbl:"Période couverte",
   fact_mode_lbl:"Mode de règlement", mode_virement:"Virement bancaire", mode_cheque:"Chèque",
   mode_especes:"Espèces", fact_client_lbl:"Client *", client_select_ph:"— Sélectionner un client —",
@@ -649,7 +653,8 @@ hu: {
   th_code:"Kód", th_nom_dev:"Név", btn_add_devise:"+ Hozzáadás",
   conv_title:"Gyors átváltó", conv_montant:"Összeg EUR-ban", conv_vers:"Céldeviza",
   conv_resultat:"Eredmény", conv_retour:"Visszaváltás EUR-ba",
-  fact_entete:"Számla fejléce", btn_print:"🖨 Nyomtatás / PDF",
+  fact_entete:"Számla fejléce",
+  btn_ubl:"↓ UBL XML export", btn_print:"🖨 Nyomtatás / PDF",
   fact_num_lbl:"Számlaszám *", fact_date_lbl:"Kiállítás dátuma", fact_periode_lbl:"Fedett időszak",
   fact_mode_lbl:"Fizetési mód", mode_virement:"Banki átutalás", mode_cheque:"Csekk",
   mode_especes:"Készpénz", fact_client_lbl:"Ügyfél *", client_select_ph:"— Ügyfél kiválasztása —",
@@ -1844,6 +1849,225 @@ function nouvelleFacture(){
   majTotaux();
 }
 function incrementNum(){document.getElementById('f-num').value=nextNum();}
+
+function exporterUBL(){
+  // ── Collecter les données (mêmes sources que imprimerFacture) ──────────
+  const num      = document.getElementById('f-num').value.trim();
+  const dateEm   = document.getElementById('f-date').value;
+  const clientRef= document.getElementById('f-client').value;
+  const tvaClient= document.getElementById('f-tva-client').value;
+  const devise   = document.getElementById('f-devise').value||'EUR';
+  const taux     = parseFloat(document.getElementById('f-taux').value)||1;
+  const mode     = document.getElementById('f-mode').value||'';
+  const periode  = document.getElementById('f-periode').value||'';
+
+  if(!num||!dateEm||!clientRef){
+    alert(lang==='fr'
+      ? 'Remplissez au minimum le N° de facture, la date et le client avant d\'exporter.'
+      : 'Az exportálás előtt töltse ki a számlaszámot, dátumot és ügyfelet.');
+    return;
+  }
+
+  const p  = state.parametres;
+  const cl = state.clients.find(c=>c.ref===clientRef)||{};
+  const bq = getBanqueActive();
+  const isUEpro = (cl.type||'').includes('UE')||(cl.type||'').includes('Szakmai');
+
+  // Totaux
+  let total = 0;
+  state.currentLignes.forEach(l=>{ total+=(parseFloat(l.qty)||0)*(parseFloat(l.pu)||0); });
+  const totalEur = devise==='EUR' ? total : total/taux;
+
+  // Date échéance
+  let echeanceISO = dateEm;
+  if(dateEm){ const d2=new Date(dateEm); d2.setDate(d2.getDate()+(p.delai||30)); echeanceISO=d2.toISOString().slice(0,10); }
+
+  // Code devise ISO 4217
+  const devCode = devise||'EUR';
+
+  // Identifiant pays émetteur (extrait du N° TVA ou FR par défaut)
+  const paysEm = p.tvaIntra ? p.tvaIntra.slice(0,2).toUpperCase() : 'FR';
+  const paysCl = cl.pays ? cl.pays.slice(0,2).toUpperCase() : (cl.tva||tvaClient||'').slice(0,2).toUpperCase()||'XX';
+
+  // ── Échapper les caractères XML ────────────────────────────────────────
+  const xe = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;');
+
+  // ── Lignes de facture (cac:InvoiceLine) ───────────────────────────────
+  const lignesUBL = state.currentLignes
+    .filter(l => l.desc || l.qty || l.pu)
+    .map((l, i) => {
+      const qty  = parseFloat(l.qty)||0;
+      const pu   = parseFloat(l.pu)||0;
+      const mt   = (qty * pu).toFixed(2);
+      const dateL= l.date||dateEm;
+      return `    <cac:InvoiceLine>
+      <cbc:ID>${i+1}</cbc:ID>
+      <cbc:InvoicedQuantity unitCode="HUR">${qty.toFixed(2)}</cbc:InvoicedQuantity>
+      <cbc:LineExtensionAmount currencyID="${devCode}">${mt}</cbc:LineExtensionAmount>
+      <cac:InvoicePeriod>
+        <cbc:StartDate>${dateL}</cbc:StartDate>
+        <cbc:EndDate>${dateL}</cbc:EndDate>
+      </cac:InvoicePeriod>
+      <cac:Item>
+        <cbc:Description>${xe(l.desc)}</cbc:Description>
+        <cbc:Name>${xe(l.desc||'Prestation de service')}</cbc:Name>
+        <cac:ClassifiedTaxCategory>
+          <cbc:ID>${isUEpro?'AE':'E'}</cbc:ID>
+          <cbc:Percent>0</cbc:Percent>
+          <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
+        </cac:ClassifiedTaxCategory>
+      </cac:Item>
+      <cac:Price>
+        <cbc:PriceAmount currencyID="${devCode}">${pu.toFixed(2)}</cbc:PriceAmount>
+      </cac:Price>
+    </cac:InvoiceLine>`;
+    }).join('\n');
+
+  // ── Bloc TVA (cac:TaxTotal) ───────────────────────────────────────────
+  // Code taxe : AE = Autoliquidation (reverse charge), E = exonéré (293B CGI)
+  const taxCode  = isUEpro ? 'AE' : 'E';
+  const taxReason= isUEpro
+    ? 'Reverse charge / Autoliquidation — art. 283-2 CGI, Directive 2006/112/CE art. 196'
+    : 'TVA non applicable, art. 293 B du CGI';
+
+  // ── Mode de paiement UBL ──────────────────────────────────────────────
+  const payMeans = mode.toLowerCase().includes('virement')||mode.toLowerCase().includes('utalás') ? '30'
+    : mode.toLowerCase().includes('chèque')||mode.toLowerCase().includes('csekk') ? '20'
+    : mode.toLowerCase().includes('espèces')||mode.toLowerCase().includes('készpénz') ? '10'
+    : '30';
+
+  // ── Assemblage du XML UBL BIS Billing 3.0 ─────────────────────────────
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<!-- UBL BIS Billing 3.0 — EN 16931 compliant -->
+<!-- Généré par Facturation Cours d'Allemand — ${new Date().toISOString()} -->
+<ubl:Invoice xmlns:ubl="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
+             xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+             xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+
+  <!-- ── En-tête ───────────────────────────────────────────────── -->
+  <cbc:CustomizationID>urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0</cbc:CustomizationID>
+  <cbc:ProfileID>urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</cbc:ProfileID>
+  <cbc:ID>${xe(num)}</cbc:ID>
+  <cbc:IssueDate>${dateEm}</cbc:IssueDate>
+  <cbc:DueDate>${echeanceISO}</cbc:DueDate>
+  <cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode><!-- 380 = Facture commerciale -->
+  <cbc:Note>${xe(isUEpro ? 'Autoliquidation / Reverse Charge — TVA 0%' : 'TVA non applicable art. 293 B CGI')}</cbc:Note>
+  ${periode?`<cbc:TaxPointDate>${dateEm}</cbc:TaxPointDate>`:''}
+  <cbc:DocumentCurrencyCode>${devCode}</cbc:DocumentCurrencyCode>
+  ${devCode!=='EUR'?`<cbc:TaxCurrencyCode>EUR</cbc:TaxCurrencyCode>`:''}
+  <cbc:BuyerReference>${xe(cl.ref||clientRef)}</cbc:BuyerReference>
+
+  <!-- ── Émetteur (AccountingSupplierParty) ────────────────────── -->
+  <cac:AccountingSupplierParty>
+    <cac:Party>
+      <cbc:EndpointID schemeID="0009">${xe(p.siret||'')}</cbc:EndpointID>
+      <cac:PartyIdentification>
+        <cbc:ID schemeID="0009">${xe(p.siret||'')}</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PartyName><cbc:Name>${xe(p.nom||'')}</cbc:Name></cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>${xe(p.adr1||'')}</cbc:StreetName>
+        ${p.adr2?`<cbc:AdditionalStreetName>${xe(p.adr2)}</cbc:AdditionalStreetName>`:''}
+        <cbc:CityName>${xe((p.ville||'').replace(/^\d+\s*/,''))}</cbc:CityName>
+        <cbc:PostalZone>${xe((p.ville||'').match(/^\d+/)?.[0]||'')}</cbc:PostalZone>
+        <cac:Country><cbc:IdentificationCode>${paysEm}</cbc:IdentificationCode></cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cbc:CompanyID>${xe(p.tvaIntra||'')}</cbc:CompanyID>
+        <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>${xe(p.nom||'')}</cbc:RegistrationName>
+        <cbc:CompanyID schemeID="0009">${xe(p.siret||'')}</cbc:CompanyID>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:ElectronicMail>${xe(p.email||'')}</cbc:ElectronicMail>
+        ${p.tel?`<cbc:Telephone>${xe(p.tel)}</cbc:Telephone>`:''}
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingSupplierParty>
+
+  <!-- ── Client (AccountingCustomerParty) ──────────────────────── -->
+  <cac:AccountingCustomerParty>
+    <cac:Party>
+      <cac:PartyName><cbc:Name>${xe(cl.nom||'')}${cl.prenom?' '+xe(cl.prenom):''}</cbc:Name></cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>${xe(cl.adresse||'')}</cbc:StreetName>
+        <cbc:CityName>${xe(cl.ville||'')}</cbc:CityName>
+        <cbc:PostalZone>${xe(cl.cp||'')}</cbc:PostalZone>
+        <cac:Country><cbc:IdentificationCode>${xe(paysCl)}</cbc:IdentificationCode></cac:Country>
+      </cac:PostalAddress>
+      ${(tvaClient||cl.tva)?`<cac:PartyTaxScheme>
+        <cbc:CompanyID>${xe(tvaClient||cl.tva||'')}</cbc:CompanyID>
+        <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
+      </cac:PartyTaxScheme>`:''}
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>${xe(cl.nom||'')}</cbc:RegistrationName>
+        ${cl.tva?`<cbc:CompanyID>${xe(cl.tva)}</cbc:CompanyID>`:''}
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        ${cl.email?`<cbc:ElectronicMail>${xe(cl.email)}</cbc:ElectronicMail>`:''}
+        ${cl.tel?`<cbc:Telephone>${xe(cl.tel)}</cbc:Telephone>`:''}
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingCustomerParty>
+
+  <!-- ── Coordonnées bancaires (PaymentMeans) ───────────────────── -->
+  <cac:PaymentMeans>
+    <cbc:PaymentMeansCode name="${xe(mode)}">${payMeans}</cbc:PaymentMeansCode>
+    <cbc:PaymentDueDate>${echeanceISO}</cbc:PaymentDueDate>
+    ${bq?.iban?`<cac:PayeeFinancialAccount>
+      <cbc:ID>${xe(bq.iban.replace(/\s/g,''))}</cbc:ID>
+      <cbc:Name>${xe(bq.nom||'')}</cbc:Name>
+      ${bq.swift?`<cac:FinancialInstitutionBranch>
+        <cbc:ID>${xe(bq.swift)}</cbc:ID>
+      </cac:FinancialInstitutionBranch>`:''}
+    </cac:PayeeFinancialAccount>`:''}
+  </cac:PaymentMeans>
+
+  <!-- ── Conditions de paiement ─────────────────────────────────── -->
+  <cac:PaymentTerms>
+    <cbc:Note>${xe(isUEpro && p.penalites ? 'Pénalités de retard : '+p.penalites : 'Paiement à '+( p.delai||30)+' jours')}</cbc:Note>
+  </cac:PaymentTerms>
+
+  <!-- ── TVA (TaxTotal) ─────────────────────────────────────────── -->
+  <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="${devCode}">0.00</cbc:TaxAmount>
+    <cac:TaxSubtotal>
+      <cbc:TaxableAmount currencyID="${devCode}">${total.toFixed(2)}</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="${devCode}">0.00</cbc:TaxAmount>
+      <cac:TaxCategory>
+        <cbc:ID>${taxCode}</cbc:ID>
+        <cbc:Percent>0</cbc:Percent>
+        <cbc:TaxExemptionReason>${xe(taxReason)}</cbc:TaxExemptionReason>
+        <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
+      </cac:TaxCategory>
+    </cac:TaxSubtotal>
+  </cac:TaxTotal>
+
+  <!-- ── Totaux (LegalMonetaryTotal) ───────────────────────────── -->
+  <cac:LegalMonetaryTotal>
+    <cbc:LineExtensionAmount currencyID="${devCode}">${total.toFixed(2)}</cbc:LineExtensionAmount>
+    <cbc:TaxExclusiveAmount currencyID="${devCode}">${total.toFixed(2)}</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="${devCode}">${total.toFixed(2)}</cbc:TaxInclusiveAmount>
+    <cbc:PayableAmount currencyID="${devCode}">${total.toFixed(2)}</cbc:PayableAmount>
+    ${devCode!=='EUR'?`<!-- Équivalent EUR indicatif -->
+    <!-- TaxInclusiveAmountEUR: ${totalEur.toFixed(2)} EUR (taux: 1 EUR = ${taux} ${devCode}) -->`:''}
+  </cac:LegalMonetaryTotal>
+
+  <!-- ── Lignes de facture ──────────────────────────────────────── -->
+${lignesUBL}
+
+</ubl:Invoice>`;
+
+  // ── Téléchargement ─────────────────────────────────────────────────────
+  const blob = new Blob([xml], { type: 'application/xml;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = (num||'facture') + '_UBL.xml';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
 
 function imprimerFacture(){
   // Gather current invoice data
