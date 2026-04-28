@@ -1075,27 +1075,41 @@ function sbH(extra) {
 // Upsert une ligne : d'abord DELETE la ligne existante, puis INSERT la nouvelle
 // C'est la méthode la plus fiable avec Supabase REST sans dépendre des headers
 async function sbUpsertOne(table, id_col, id_val, payload) {
-  // 1. DELETE any existing row (no error if doesn't exist — 200 with empty array)
+  // 1. DELETE existing row
   const delRes = await fetch(
     `${sbUrl}/rest/v1/${table}?${id_col}=eq.${encodeURIComponent(id_val)}`,
     { method: 'DELETE', headers: sbH({ Prefer: 'return=minimal' }) }
   );
   if (!delRes.ok) {
     const txt = await delRes.text();
-    // Ignore 404 — row didn't exist
-    if (delRes.status !== 404) throw new Error(`DELETE ${table} ${delRes.status}: ${txt}`);
+    console.warn(`[DB] DELETE ${table}[${id_val}] → ${delRes.status}: ${txt}`);
+    // 404 = row didn't exist (fine), 401/403 = RLS issue (log but continue to INSERT)
+    if (delRes.status !== 404 && delRes.status !== 401 && delRes.status !== 403) {
+      throw new Error(`DELETE ${table} ${delRes.status}: ${txt}`);
+    }
+    if (delRes.status === 401 || delRes.status === 403) {
+      console.error('[DB] ⚠ Erreur RLS — vérifiez les politiques dans Supabase Dashboard → Authentication → Policies');
+    }
   }
-  // 2. INSERT fresh row
-  const insRes = await fetch(`${sbUrl}/rest/v1/${table}`, {
+  // 2. INSERT fresh row (or PATCH if DELETE was blocked by RLS)
+  let insRes = await fetch(`${sbUrl}/rest/v1/${table}`, {
     method: 'POST',
     headers: sbH({ Prefer: 'return=minimal' }),
     body: JSON.stringify(payload)
   });
+  // If INSERT fails with 409 (row still exists because DELETE was blocked), try PATCH
+  if (!insRes.ok && insRes.status === 409) {
+    console.warn(`[DB] INSERT ${table} got 409 — trying PATCH`);
+    insRes = await fetch(
+      `${sbUrl}/rest/v1/${table}?${id_col}=eq.${encodeURIComponent(id_val)}`,
+      { method: 'PATCH', headers: sbH({ Prefer: 'return=minimal' }), body: JSON.stringify(payload) }
+    );
+  }
   if (!insRes.ok) {
     const txt = await insRes.text();
-    throw new Error(`INSERT ${table} ${insRes.status}: ${txt}`);
+    throw new Error(`SAVE ${table} ${insRes.status}: ${txt}`);
   }
-  console.log(`[DB] upserted ${table}[${id_val}]`);
+  console.log(`[DB] ✓ saved ${table}[${id_val}]`);
 }
 
 // Upsert un lot de lignes séquentiellement
@@ -1170,6 +1184,7 @@ async function sbLoadFromCloud() {
       // Nettoyer _banques avant d'assigner aux parametres
       const { _banques, ...pClean } = pdata;
       state.parametres = Object.assign({}, state.parametres, pClean);
+      normaliserParametres(); // Supabase JSON retourne parfois des strings pour les numbers
       console.log('[Supabase] Parametres loaded — nom:', state.parametres.nom, '| banques:', state.banques.length);
     } else {
       console.warn('[Supabase] No parametres row found in cloud');
@@ -1289,6 +1304,16 @@ async function saveAsync() {
     return false;
   }
 }
+function normaliserParametres() {
+  // S'assurer que les champs numériques sont bien des numbers (pas des strings)
+  const p = state.parametres;
+  p.delai        = parseInt(p.delai)        || 30;
+  p.tarifIndiv   = parseFloat(p.tarifIndiv) || 45;
+  p.tarifDuo     = parseFloat(p.tarifDuo)   || 30;
+  p.tarifGroupe  = parseFloat(p.tarifGroupe)|| 20;
+  p.tarifForfait = parseFloat(p.tarifForfait)||400;
+  p.tarifExam    = parseFloat(p.tarifExam)  || 55;
+}
 function load() {
   const raw = localStorage.getItem('facturation-allemand-v3');
   if(raw){ try{ Object.assign(state, JSON.parse(raw)); }catch(e){} }
@@ -1296,6 +1321,7 @@ function load() {
   if(old && !raw){ try{ Object.assign(state, JSON.parse(old)); }catch(e){} }
   const sl = localStorage.getItem('facturation-lang');
   if(sl) lang = sl;
+  normaliserParametres();
 }
 function exportData() {
   const blob = new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
@@ -1353,7 +1379,7 @@ function loadParametresUI() {
 async function sauvegarderParametres() {
   const p = state.parametres;
   // Lecture directe de chaque champ — pas de boucle qui pourrait planter sur un id manquant
-  const g = id => (document.getElementById(id)||{}).value || '';
+  const g = id => { const el=document.getElementById(id); return el ? el.value : ''; };
   p.nom         = g('p-nom');
   p.siret       = g('p-siret');
   p.adr1        = g('p-adr1');
